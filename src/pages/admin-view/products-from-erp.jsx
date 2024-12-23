@@ -41,7 +41,6 @@ import { getProducts } from "../../services/product/getProducts";
 import { getWarranty } from "../../services/warranty/getWarrantyService";
 
 
-
 const s3 = new AWS.S3();
 
 export const productValidation = Yup.object({

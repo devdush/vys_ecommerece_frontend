@@ -36,8 +36,6 @@ import { getBrands } from "../../services/brand/getBrands";
 import { addProduct } from "../../services/product/saveProduct";
 import * as Yup from "yup";
 
-
-
 const s3 = new AWS.S3();
 
 export const productValidation = Yup.object({

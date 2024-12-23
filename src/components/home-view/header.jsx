@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormHelperText,
+  FormLabel,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -28,14 +29,45 @@ import { Form, Formik } from "formik";
 import { getCategories } from "../../services/category/getcategory";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import { getProductsByCategory } from "../../services/product/getProductByCategory";
+import { initDB } from "../../services/indexedDBService";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DOMPurify from "dompurify";
+
 const HomeHeader = () => {
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
+    product: Yup.string().required("Title is required!"),
   });
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState({});
+  const [db, setDb] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const handleIncrease = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0) {
+      setQuantity(value);
+    } else if (e.target.value === "") {
+      setQuantity("");
+    }
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -52,6 +84,59 @@ const HomeHeader = () => {
     };
     getData();
   }, []);
+  useEffect(() => {
+    if (!selectedCategory) return; // Exit early if selectedCategory is empty or undefined
+    const getData = async () => {
+      try {
+        const productResponse = await getProductsByCategory(selectedCategory);
+        if (productResponse.data.success) {
+          setProducts(productResponse.data.data); // Corrected setCategories to setProducts
+        } else {
+          toast.error("Product data didn't fetch!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong while fetching initial product data");
+      }
+    };
+    getData();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const setupDB = async () => {
+      const database = await initDB();
+      setDb(database);
+    };
+    setupDB();
+  }, []);
+  function saveData(db, data) {
+    console.log("Function Triggered");
+
+    const transaction = db.transaction(["myStore"], "readwrite");
+    const store = transaction.objectStore("myStore");
+
+    const request = store.add(data);
+    request.onsuccess = () => {
+      console.log("Data saved successfully");
+    };
+
+    request.onerror = (event) => {
+      console.error("Error saving data:", event.target.errorCode);
+    };
+  }
+  function getAllData(db) {
+    const transaction = db.transaction(["myStore"], "readonly");
+    const store = transaction.objectStore("myStore");
+
+    const request = store.getAll();
+    request.onsuccess = () => {
+      console.log("All data:", request.result);
+    };
+
+    request.onerror = (event) => {
+      console.error("Error retrieving data:", event.target.errorCode);
+    };
+  }
+
   return (
     <Box sx={{ background: "#030138", color: "white" }}>
       <Box
@@ -213,7 +298,10 @@ const HomeHeader = () => {
                 cursor: "pointer",
               },
             }}
-            onClick={handleOpen}
+            onClick={() => {
+              handleOpen();
+              getAllData(db);
+            }}
           >
             <GetQuotation open={open} handleClose={handleClose} />
             <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
@@ -248,8 +336,6 @@ const HomeHeader = () => {
               display: "flex",
               color: "white",
               padding: "10px",
-              borderBottom: "2px solid #8d8d8d",
-              margin: "0px 20px",
             }}
           >
             <Box sx={{ flex: 1 }}></Box>
@@ -281,14 +367,30 @@ const HomeHeader = () => {
               </IconButton>
             </Box>
           </Box>
-          <Box sx={{ display: "flex", borderBottom:"2px solid #8d8d8d" }}>
+          <Box sx={{ display: "flex", borderBottom: "2px solid #8d8d8d" }}>
             <Box sx={{ flex: 1 }}></Box>
             <Box sx={{ flex: 3, padding: "10px" }}>
               <Formik
-                initialValues={{ categoryId: "" }}
+                initialValues={{
+                  categoryId: "",
+                  product: "",
+                }}
                 validationSchema={validationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
-                  setSubmitting(false);
+                  console.log(values, quantity); // Product object and quantity will be logged here
+
+                  // Use `find` to locate the selected product by matching `_id`
+                  const selProduct = products.find(
+                    (product) => product._id === values.product
+                  );
+                  const savingObj = {
+                    productName: selProduct.itemName,
+                    productPrice: selProduct.sales_price,
+                    quantity: quantity,
+                  };
+                  console.log("selProduct", savingObj);
+                  saveData(db, savingObj);
+                  getAllData(db);
                 }}
               >
                 {({
@@ -303,29 +405,36 @@ const HomeHeader = () => {
                 }) => (
                   <Form>
                     <Box sx={{ display: "flex", gap: "10px" }}>
+                      {/* Category Select */}
                       <Select
                         sx={{
-                          textAlign: "left", // Align the text to the left
+                          textAlign: "left",
                           "& .MuiSelect-select": {
-                            textAlign: "left", // Alignment inside the select
+                            textAlign: "left",
                             border: "1px solid white",
                             borderRadius: "0px",
                             color: "white",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
                           },
                           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            border: "1px solid white",
+                            //  border: "1px solid white",
                           },
                           "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "white", // Border color on hover
+                            //borderColor: "white",
                           },
                           "& .MuiSelect-icon": {
-                            color: "White", // Change arrow color here
+                            color: "white",
                           },
-                          width: "100%",
+                          width: "350px",
                         }}
                         name="categoryId"
                         value={values.categoryId}
-                        onChange={handleChange}
+                        onChange={(event) => {
+                          handleChange(event);
+                          setSelectedCategory(event.target.value);
+                        }}
                         onBlur={handleBlur}
                         variant="outlined"
                         displayEmpty
@@ -341,28 +450,30 @@ const HomeHeader = () => {
                             </MenuItem>
                           ))}
                       </Select>
+
+                      {/* Product Select */}
                       <Select
                         sx={{
-                          textAlign: "left", // Align the text to the left
+                          textAlign: "left",
                           "& .MuiSelect-select": {
-                            textAlign: "left", // Alignment inside the select
+                            textAlign: "left",
                             border: "1px solid white",
                             borderRadius: "0px",
                             color: "white",
                           },
                           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            border: "1px solid white",
+                            // border: "1px solid white",
                           },
                           "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "white", // Border color on hover
+                            // borderColor: "white",
                           },
                           "& .MuiSelect-icon": {
-                            color: "White", // Change arrow color here
+                            color: "White",
                           },
-                          width: "100%",
+                          width: "350px",
                         }}
-                        name="categoryId"
-                        value={values.categoryId}
+                        name="product"
+                        value={values.product}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         variant="outlined"
@@ -370,19 +481,76 @@ const HomeHeader = () => {
                         size="small"
                       >
                         <MenuItem value="" disabled hidden>
-                          Select a category
+                          Select a product
                         </MenuItem>
-                        {categories &&
-                          categories.map((category) => (
-                            <MenuItem key={category._id} value={category._id}>
-                              {category?.categoryTitle}
+                        {products &&
+                          products.map((product) => (
+                            <MenuItem key={product._id} value={product._id}>
+                              {product?.itemName}
                             </MenuItem>
                           ))}
                       </Select>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          color: "white",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          overflow: "hidden",
+                          width: "150px",
+                          padding: "5px 0px 5px 0px",
+                        }}
+                      >
+                        <IconButton
+                          onClick={handleDecrease}
+                          size="small"
+                          sx={{
+                            borderLeft: "1px solid #ffffff",
+                            borderRight: "1px solid #ffffff",
+                            color: "white",
+                          }}
+                        >
+                          <RemoveIcon />
+                        </IconButton>
+
+                        <TextField
+                          value={quantity}
+                          onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          sx={{ color: "white" }}
+                          inputProps={{
+                            style: {
+                              textAlign: "center",
+                              width: "40px",
+                              padding: "5px 0",
+                              color: "white",
+                            },
+                          }}
+                          variant="standard"
+                          InputProps={{
+                            disableUnderline: true,
+                          }}
+                        />
+                        <IconButton
+                          onClick={handleIncrease}
+                          size="small"
+                          sx={{
+                            borderLeft: "1px solid #ffffff",
+                            borderRight: "1px solid #ffffff",
+                            color: "white",
+                          }}
+                        >
+                          <AddIcon />
+                        </IconButton>
+                      </Box>
+                      {/* Submit Button */}
                       <Button
                         type="submit"
                         sx={{
-                          width: "50%",
+                          width: "20%",
                           backgroundColor: "#ffffff",
                           fontWeight: "600",
                         }}

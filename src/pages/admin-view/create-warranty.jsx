@@ -19,7 +19,6 @@ import AWS from "aws-sdk";
 import { addWarranty } from "../../services/warranty/addWarrantyService";
 
 
-
 const s3 = new AWS.S3();
 
 const CreateWarranty = () => {
