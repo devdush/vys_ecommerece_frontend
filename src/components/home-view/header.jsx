@@ -34,7 +34,8 @@ import { initDB } from "../../services/indexedDBService";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DOMPurify from "dompurify";
-
+import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import { DataGrid } from "@mui/x-data-grid";
 const HomeHeader = () => {
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
@@ -49,6 +50,10 @@ const HomeHeader = () => {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [db, setDb] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [total, setTotal] = useState();
+
+  const [qoutData, setQouteData] = useState();
+
   const handleIncrease = () => {
     setQuantity((prev) => prev + 1);
   };
@@ -67,12 +72,20 @@ const HomeHeader = () => {
       setQuantity("");
     }
   };
+  useEffect(() => {
+    const setupDB = async () => {
+      const database = await initDB();
+      setDb(database);
+    };
+    setupDB();
+  }, []);
 
   useEffect(() => {
     const getData = async () => {
+      if (!db) return;
       try {
         const categoryResponse = await getCategories();
-
+        getAllData(db);
         if (categoryResponse.data.success) {
           setCategories(categoryResponse.data.data);
         } else {
@@ -83,7 +96,7 @@ const HomeHeader = () => {
       }
     };
     getData();
-  }, []);
+  }, [db, total]);
   useEffect(() => {
     if (!selectedCategory) return; // Exit early if selectedCategory is empty or undefined
     const getData = async () => {
@@ -101,13 +114,6 @@ const HomeHeader = () => {
     getData();
   }, [selectedCategory]);
 
-  useEffect(() => {
-    const setupDB = async () => {
-      const database = await initDB();
-      setDb(database);
-    };
-    setupDB();
-  }, []);
   function saveData(db, data) {
     console.log("Function Triggered");
 
@@ -117,6 +123,7 @@ const HomeHeader = () => {
     const request = store.add(data);
     request.onsuccess = () => {
       console.log("Data saved successfully");
+      getAllData(db);
     };
 
     request.onerror = (event) => {
@@ -130,13 +137,109 @@ const HomeHeader = () => {
     const request = store.getAll();
     request.onsuccess = () => {
       console.log("All data:", request.result);
+      setQouteData(request.result);
+      const totalPrice = qoutData?.reduce((accumulator, product) => {
+        let price = parseFloat(product.productPrice);
+        console.log("PR", product.quantity);
+        if (product.quantity > 1) {
+          price = price * product.quantity;
+        }
+        return accumulator + (isNaN(price) ? 0 : price); // Handle invalid prices
+      }, 0);
+
+      setTotal(totalPrice);
     };
 
     request.onerror = (event) => {
       console.error("Error retrieving data:", event.target.errorCode);
     };
   }
+  const handleDelete = async (id) => {
+    if (!db) {
+      toast.error("Database is not initialized!");
+      return;
+    }
 
+    try {
+      // Open a transaction for the "myStore" object store
+      const transaction = db.transaction(["myStore"], "readwrite");
+      const objectStore = transaction.objectStore("myStore");
+
+      // Attempt to delete the record with the specified id
+      const deleteRequest = objectStore.delete(id);
+
+      deleteRequest.onsuccess = () => {
+        console.log(`Data with id ${id} deleted successfully.`);
+        // Optionally refresh the data after deletion
+        getAllData(db); // Refresh data display
+      };
+
+      deleteRequest.onerror = (event) => {
+        console.error("Error deleting data:", event.target.error);
+        toast.error("Failed to delete data!");
+      };
+    } catch (error) {
+      console.error("Unexpected error during deletion:", error);
+      toast.error("Something went wrong while deleting!");
+    }
+  };
+  const columns = [
+    {
+      field: "productName",
+      headerName: "Name",
+      flex: 2,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "productPrice",
+      headerName: "Sale Price",
+      flex: 1,
+      cellClassName: "name-column--cell",
+      valueFormatter: (params) => {
+        // Format the value to 2 decimal points
+        const value = Number(params);
+
+        return value.toFixed(2);
+      },
+    },
+
+    {
+      field: "action",
+      headerName: "Actions",
+      flex: 1,
+      headerAlign: "left",
+      align: "center",
+      renderCell: (params) => (
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              
+              justifyContent: "space-around",
+            }}
+          >
+            <Button
+              onClick={() => handleDelete(params.row.id)}
+              variant="contained"
+              style={{
+                backgroundColor: "#887575",
+                color: "white",
+              }}
+            >
+              <DoNotDisturbIcon sx={{ mr: "5px" }} />
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      ),
+    },
+  ];
   return (
     <Box sx={{ background: "#030138", color: "white" }}>
       <Box
@@ -145,11 +248,18 @@ const HomeHeader = () => {
           display: "flex",
           justifyContent: "space-between",
           borderBottom: "1px solid white",
+          flexWrap: "wrap",
         }}
       >
         <Box
           name="socialMedia"
-          sx={{ display: "flex", flex: 1, padding: "10px" }}
+          sx={{
+            display: "flex",
+            flex: 1,
+            padding: "10px",
+            flexGrow: 1,
+            flexBasis: 200,
+          }}
         >
           <Box name="facebook" sx={{ display: "flex", paddingRight: "10px" }}>
             <Link
@@ -194,7 +304,7 @@ const HomeHeader = () => {
                 }}
               />
             </Link>
-            <Typography sx={{ fontSize: "15px" }}>Tiktok</Typography>
+            <Typography sx={{ fontSize: "15px" }}>TikTok</Typography>
           </Box>
         </Box>
         <Box
@@ -204,6 +314,8 @@ const HomeHeader = () => {
             flex: 1,
             padding: "10px",
             justifyContent: "right",
+            flexGrow: 1,
+            flexBasis: 200,
           }}
         >
           <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
@@ -300,10 +412,10 @@ const HomeHeader = () => {
             }}
             onClick={() => {
               handleOpen();
-              getAllData(db);
+
+              console.log("qoutData", qoutData);
             }}
           >
-            <GetQuotation open={open} handleClose={handleClose} />
             <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
             <Typography sx={{ fontSize: "15px" }}>Get A Quotation</Typography>
           </Box>
@@ -318,17 +430,18 @@ const HomeHeader = () => {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        sx={{ display: "flex" }}
+        sx={{ display: "flex", overflowY: "scroll" }}
       >
         <Box
           sx={{
-            width: "100%",
-
-            bgcolor: "#08080855",
+            bgcolor: "#080808cc",
             color: "black",
-            backdropFilter: "blur(10px)", // Blur effect
+            backdropFilter: "blur(15px)",
             display: "flex",
             flexDirection: "column",
+            height: "auto", // Allow content-based height
+            width: "100%",
+            overflowY: "auto", // Enable scrolling within the modal if content is too large
           }}
         >
           <Box
@@ -383,12 +496,13 @@ const HomeHeader = () => {
                   const selProduct = products.find(
                     (product) => product._id === values.product
                   );
+                  console.log("selProduct", selProduct);
                   const savingObj = {
                     productName: selProduct.itemName,
                     productPrice: selProduct.sales_price,
+                    productImage: selProduct.defaultImage,
                     quantity: quantity,
                   };
-                  console.log("selProduct", savingObj);
                   saveData(db, savingObj);
                   getAllData(db);
                 }}
@@ -563,6 +677,58 @@ const HomeHeader = () => {
               </Formik>
             </Box>
             <Box sx={{ flex: 1 }}></Box>
+          </Box>
+          <Box
+            display="grid"
+            sx={{
+              "& .MuiDataGrid-root": {
+                border: "none",
+                color: "white",
+              },
+              "& .MuiDataGrid-cell": {
+                backgroundColor: "#ffffff0f",
+                color: "#fffff",
+              },
+
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#ffffff0",
+                color: "black",
+              },
+              "& .MuiDataGrid-row--borderBottom.css-yseucu-MuiDataGrid-columnHeaderRow":
+                {
+                  backgroundColor: "#ffffff1d",
+                  backdropFilter: "2px",
+                },
+              padding: "20px",
+            }}
+          >
+            <DataGrid
+              rows={qoutData} // Use filtered data here
+              getRowId={(row) => row.id}
+              columns={columns}
+            />
+          </Box>
+          <Box
+            sx={{
+              color: "white",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h2" sx={{ fontWeight: "200" }}>
+              Total
+            </Typography>
+            <Typography variant="h3" sx={{ fontWeight: "700" }}>
+              {total
+                ? new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }).format(total)
+                : "0.00"}{" "}
+              LKR
+            </Typography>
           </Box>
         </Box>
       </Modal>

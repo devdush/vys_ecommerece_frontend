@@ -46,7 +46,11 @@ const HomeView = () => {
   const [topRatedProductData, setTopRatedProductData] = useState([]);
   const [specialOfferProductData, setSpecialOfferProductData] = useState([]);
   const [ProductData, setProductData] = useState([]);
+  const [isReady, setIsReady] = useState(false);
 
+  useEffect(() => {
+    setIsReady(true); // Trigger re-render after the component mounts
+  }, []);
   useEffect(() => {
     const getData = async () => {
       try {
@@ -67,9 +71,10 @@ const HomeView = () => {
     };
     getData();
   }, []);
-
+  useEffect(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, []);
   const handleChange = (event, newValue) => {
-
     setValue(newValue);
   };
   function CustomTabPanel(props) {
@@ -97,18 +102,18 @@ const HomeView = () => {
 
   const images = [
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1710145714.jpg",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/1.jpg",
       alt: "Image 1",
       caption: "This is the first image",
     },
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1670603776.jpg",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/2.jpg",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/DALLE2024-12-1016.49.42-CreateanimageofapowerfulfiercedragonrepresentingtheMSIbrandcombiningadvancedtechnologyelementswithadynamicfuturisticdesign.The-ezgif.com-webp-to-jpg-converter.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIARYEUCDERM754DSSU%2F20241211%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241211T032641Z&X-Amz-Expires=300&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQCs92rf6%2Fr8Wr2nk90AjgkuQDZeSWiDX2psZfdLpuuK1QIhAPhOmqTT4LHYpB7zx82WK%2BPQKyDFqxwISnkprTpiRhSmKogDCJ3%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMMTIwNTY5NjAwMjkwIgxBdAbF7E76zM6zrzAq3AJxi7PFYS7bXbcNdeEnbYDCbV2qyagGliqyk2G%2BB3jdI7Ho4f%2FlOb4mQmEUptWgK5ci65%2Bpt2qIwTDU%2FEAOW53N9Vrq1Ine6Az65rp0Lp4XipZ4DnYPV%2F11%2B%2FQRKz%2FGQyoKkCgj2sB5nCZ%2FR1z1jDWEX%2FvT4xUHP4x%2BXOqwIWMt9N2fUpooV%2FU3Oy38laJnRxyTugvSW9RdS9LSkrEIFVz0c6gN5kAagFYb%2FG0Xz0wt0lifq7mrDflP3NirG%2BCM8I0lOO4vSq5TU%2Bvugm8Pi6tYvXUbsN%2BpS1U7%2BWqBi2kvlE3Y0AYIG0nGakAzYicYuOOy5%2FBS10FRJ%2B61fO%2Fk1xOA6x91yg4dkMXnquWPGHq%2FGYklUTV8S3zoYG8jIqcKq9WwNCS0JiYdyNvy6eZZD3hD34gvZ7pWobvr1%2FBXA3XD1B%2F6OOusTJ16GCaeV4sXrqTg%2Bibv9tPAlKYeaBcw0ozkugY6sgJmQnNbcBb4dv7dxq1EVseSE52U7%2F8EwQEweDLkC0kuXBxOjyQMjqGx9zsdzH1cNmcB01kUwB00UmYx0swUn%2F6Q1EgFXcoGRG0AYdqaYKe7o%2F9K2c2zcFyXO93TJe41luPKsxA%2BexJzibhd81SoqTTjtzm1ize4v0z4q%2F1rwS09%2BApWc9DWrj2oaYvWIgsS7JrFy2Ibay5%2BRRu4qrrZgxMaKE7oqlPe661LjHVvJi7zlqrRuAsBvc%2BfLUtSAYxWbZNg1%2FUb2VmsokAuJcrt7HktqVdZ7ugntxzNu%2By%2Bu5HA9EnuyGei75BbYN5fcEk470NAQOl%2BmPklLI3JRZPuxt61jZu8TEEEPvtD5X6ZkzIU9Do53MwXGEegZDjr3uD80demZMpBXELbGHYjyncdqrR8kOg%3D&X-Amz-Signature=11640c6a3994561f8dc5a22085c61f41e97ede87a4db014cbe98a71abebe1f03&X-Amz-SignedHeaders=host&response-content-disposition=inline",
-      alt: "Image 2",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/3.jpg",
+      alt: "Image 3",
       caption: "This is the second image",
     },
   ];
@@ -145,32 +150,6 @@ const HomeView = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          infinite: true,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
   };
   const brandSettings = {
     dots: false,
@@ -232,21 +211,27 @@ const HomeView = () => {
             boxShadow: theme.shadows[3],
           }}
         >
-          <Slider {...settings}>
-            {images.map((image, index) => (
-              <Box key={index}>
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  style={{
-                    width: "100%",
-                    height: "350px",
-                    objectFit: "fill",
-                  }}
-                />
-              </Box>
-            ))}
-          </Slider>
+          {isReady ? (
+            <Box>
+              <Slider {...settings}>
+                {images?.map((image, index) => (
+                  <Box key={index}>
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      style={{
+                        width: "100%",
+                        height: "350px",
+                        objectFit: "fill",
+                      }}
+                    />
+                  </Box>
+                ))}
+              </Slider>
+            </Box>
+          ) : (
+            <Box>TEST</Box>
+          )}
         </Box>
       </Box>
       <Box
@@ -294,7 +279,6 @@ const HomeView = () => {
                     sx={{
                       fontFamily: "Open Sans, Helvetica, Arial, sans-serif",
                       fontWeight: "300",
-                    
                     }}
                   >
                     {product.itemName.length > 50
@@ -361,9 +345,7 @@ const HomeView = () => {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <Box
-           
-          >
+          <Box>
             <Grid container spacing={2}>
               {onSaleProductData.slice(0, 9).map((product, index) => (
                 <Grid item xs={12} sm={6} md={3} key={product._id || index}>
@@ -420,7 +402,7 @@ const HomeView = () => {
               }).map((_, idx) => (
                 <Grid item xs={12} sm={6} md={3} key={`empty-${idx}`} />
               ))}
-            </Grid>
+            </Grid> 
           </Box>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>

@@ -1,26 +1,28 @@
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { logoutUser } from "../../services/auth/logout";
 import { getProductsByCategory } from "../../services/product/getProductByCategory";
-import { toast } from "react-toastify";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useNavigate, useParams } from "react-router-dom";
+
 const ShopHome = () => {
   const navigate = useNavigate();
   const [ProductData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Access the subcategory ID from the URL
+
   useEffect(() => {
     const getData = async () => {
-      // const pathname = window.location.pathname;
-      // const id = pathname.split("/").pop();
-
+      setLoading(true);
       try {
         const response = await getProductsByCategory(id);
-        setProductData(response.data.data);
+        setProductData(response.data.data || []); // Fallback to an empty array if data is undefined
       } catch (error) {
-        toast.error("Something went wrong while fetching initial data");
+        console.error("Error while fetching products:", error);
+        setProductData([]); // Set an empty array on error
+      } finally {
+        setLoading(false);
       }
     };
     getData();
@@ -31,6 +33,22 @@ const ShopHome = () => {
     console.log(`Card clicked for product ID: ${id}`);
     navigate(`/shop/products/${id}`); // Example navigation
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ padding: "20px", textAlign: "center", color: "white" }}>
+        <Typography variant="h6">Loading...</Typography>
+      </Box>
+    );
+  }
+
+  if (!ProductData.length) {
+    return (
+      <Box sx={{ padding: "20px", textAlign: "center", color: "white" }}>
+        <Typography variant="h6">No products available</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -97,9 +115,8 @@ const ShopHome = () => {
               <Typography
                 sx={{
                   fontWeight: "500",
-
                   color:
-                    product.onHand && product.onHand > 0 ? "#09fd09" : " red",
+                    product.onHand && product.onHand > 0 ? "#09fd09" : "red",
                 }}
               >
                 {product.onHand && product.onHand > 0
@@ -135,16 +152,6 @@ const ShopHome = () => {
             </Box>
           </Box>
         ))}
-        {/* Add empty boxes for the remaining slots in the last row */}
-        {ProductData.length % 4 !== 0 && (
-          <Box
-            sx={{
-              gridColumn: `span ${4 - (ProductData.length % 4)}`, // Span empty columns
-              backgroundColor: "transparent", // No background
-              padding: "10px",
-            }}
-          />
-        )}
       </Box>
     </Box>
   );

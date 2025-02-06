@@ -40,7 +40,11 @@ import { addProduct } from "../../services/product/saveProduct";
 import { getProducts } from "../../services/product/getProducts";
 import { getWarranty } from "../../services/warranty/getWarrantyService";
 
-
+AWS.config.update({
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_AWS_REGION,
+});
 const s3 = new AWS.S3();
 
 export const productValidation = Yup.object({
@@ -234,6 +238,7 @@ const FromERP = () => {
           (element) =>
             !webDBItemCodes.includes(element.itemName) && element.on_hand != 0
         );
+        console.log("NEW ARRAY",newArray)
         setData(newArray);
         setFilteredData(newArray); // Set initial filtered data
       } catch (error) {

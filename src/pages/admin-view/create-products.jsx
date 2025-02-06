@@ -27,7 +27,11 @@ import { getCategories } from "../../services/category/getcategory";
 import { getBrands } from "../../services/brand/getBrands";
 import { addProduct } from "../../services/product/saveProduct";
 
-
+AWS.config.update({
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_AWS_REGION,
+});
 
 const s3 = new AWS.S3();
 
@@ -118,7 +122,7 @@ export default function () {
 
       const img = new Image();
       img.onload = () => {
-        if (img.width !== 343 || img.height !== 446) {
+        if (img.width !== 400 || img.height !== 400) {
           setError(
             "Invalid image dimensions. Please upload an image of 300x300 pixels."
           );
@@ -247,6 +251,8 @@ export default function () {
               if (response.data.success) {
                 toast.success("Successfully added a new product to the shop");
               } else {
+                console.log(response);
+                
                 toast.error("Product adding was unsuccessful!");
               }
             } catch (error) {
