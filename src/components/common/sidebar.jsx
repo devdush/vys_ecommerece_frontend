@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, MenuItem, Sidebar, SubMenu } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
 
 import { useEffect } from "react";
 
@@ -24,7 +24,7 @@ const SidebarComponent = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selected, setSelected] = useState("Dashboard");
-
+  const [loading, setLoading] = useState (true)
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
@@ -57,6 +57,7 @@ const SidebarComponent = () => {
         );
 
         setMenuItems(updatedMenuItems);
+        setLoading(false)
       } catch (error) {
         console.error("Error fetching menu data:", error);
       }
@@ -76,6 +77,21 @@ const SidebarComponent = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
+        <CircularProgress color="primary" size={60} />
+      </Box>
+    );
+  }
   return (
     <Box
       sx={{

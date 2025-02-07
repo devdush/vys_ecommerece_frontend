@@ -335,7 +335,9 @@ const HomeHeader = () => {
           </Box>
           <Box name="login" sx={{ display: "flex", paddingRight: "10px" }}>
             <PersonOutlineOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Typography sx={{ fontSize: "15px" }}>Login</Typography>
+            <Link to={"auth/login"}>
+              <Typography sx={{ fontSize: "15px" }}>Login</Typography>
+            </Link>
           </Box>
         </Box>
       </Box>

@@ -44,7 +44,7 @@ const HomeView = () => {
   const [specialOfferProductData, setSpecialOfferProductData] = useState([]);
   const [ProductData, setProductData] = useState([]);
   const [isReady, setIsReady] = useState(false);
-  const [loading, setLoading] = useState(true); // Global loading state
+
   useEffect(() => {
     setIsReady(true); // Trigger re-render after the component mounts
   }, []);
@@ -62,11 +62,10 @@ const HomeView = () => {
         setOnSaleProductData(onSaleProRes.data.data);
         setTopRatedProductData(topRatedProRes.data.data);
         setSpecialOfferProductData(specialOfferProRes.data.data);
-        setTimeout(() => {
-          setLoading(false); // Hide loader once everything is loaded
-        }, 1000);
+ 
       } catch (error) {
         toast.error("Something went wrong while fetching initial data");
+       
       }
     };
     getData();
@@ -187,21 +186,7 @@ const HomeView = () => {
       },
     ],
   };
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100vw",
-        }}
-      >
-        <CircularProgress color="primary" size={60} />
-      </Box>
-    );
-  }
+
   return (
     <Box
       name="container"

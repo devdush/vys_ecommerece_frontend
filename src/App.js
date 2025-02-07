@@ -33,6 +33,7 @@ import FromERP from "./pages/admin-view/products-from-erp";
 import CreateBrands from "./pages/admin-view/create-brands";
 import ProductLayout from "./components/product-view/layout";
 import CreateWarranty from "./pages/admin-view/create-warranty";
+import { Box, CircularProgress } from "@mui/material";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -42,12 +43,26 @@ function App() {
 
   useEffect(() => {
     const token = JSON.parse(sessionStorage.getItem("token"));
-    console.log("sad",token);
-    
+    console.log("sad", token);
+
     dispatch(CheckUserAuth(token));
   }, [dispatch]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
+        <CircularProgress color="primary" size={60} />
+      </Box>
+    );
+  }
 
   return (
     <div className="App">
