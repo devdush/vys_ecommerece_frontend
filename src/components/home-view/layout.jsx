@@ -9,27 +9,19 @@ import {
   TextField,
   Typography,
   useTheme,
+  CircularProgress
 } from "@mui/material";
-import Sidebar from "../common/sidebar";
+
 import SidebarComponent from "../common/sidebar";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import PhoneIcon from "@mui/icons-material/Phone";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import PersonPinIcon from "@mui/icons-material/PersonPin";
-import SearchIcon from "@mui/icons-material/Search";
-import TelegramIcon from "@mui/icons-material/Telegram";
+
 import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
 import ScheduleSendOutlinedIcon from "@mui/icons-material/ScheduleSendOutlined";
-import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import MusicNoteOutlinedIcon from "@mui/icons-material/MusicNoteOutlined";
-import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
-import { Link } from "react-router-dom";
+
 import Footer from "./footer";
 import { getFeaturedProducts } from "../../services/product/getFeaturedProduct";
 import { toast } from "react-toastify";
@@ -37,6 +29,11 @@ import { getProducts } from "../../services/product/getProducts";
 import { getOnSaleProducts } from "../../services/product/getOnSaleProducts";
 import { getTopRatedProducts } from "../../services/product/getTopRatedProducts";
 import { getSpecialOfferProducts } from "../../services/product/getSpecialOfferProducts";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 const HomeView = () => {
   const theme = useTheme();
@@ -47,7 +44,7 @@ const HomeView = () => {
   const [specialOfferProductData, setSpecialOfferProductData] = useState([]);
   const [ProductData, setProductData] = useState([]);
   const [isReady, setIsReady] = useState(false);
-
+  const [loading, setLoading] = useState(true); // Global loading state
   useEffect(() => {
     setIsReady(true); // Trigger re-render after the component mounts
   }, []);
@@ -65,6 +62,9 @@ const HomeView = () => {
         setOnSaleProductData(onSaleProRes.data.data);
         setTopRatedProductData(topRatedProRes.data.data);
         setSpecialOfferProductData(specialOfferProRes.data.data);
+        setTimeout(() => {
+          setLoading(false); // Hide loader once everything is loaded
+        }, 1000);
       } catch (error) {
         toast.error("Something went wrong while fetching initial data");
       }
@@ -119,7 +119,7 @@ const HomeView = () => {
   ];
   const brandImages = [
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1666802240.png",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/1.jpg",
       alt: "Image 1",
       caption: "This is the first image",
     },
@@ -187,6 +187,21 @@ const HomeView = () => {
       },
     ],
   };
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+        }}
+      >
+        <CircularProgress color="primary" size={60} />
+      </Box>
+    );
+  }
   return (
     <Box
       name="container"
@@ -211,27 +226,27 @@ const HomeView = () => {
             boxShadow: theme.shadows[3],
           }}
         >
-          {isReady ? (
-            <Box>
-              <Slider {...settings}>
-                {images?.map((image, index) => (
-                  <Box key={index}>
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      style={{
-                        width: "100%",
-                        height: "350px",
-                        objectFit: "fill",
-                      }}
-                    />
-                  </Box>
-                ))}
-              </Slider>
-            </Box>
-          ) : (
-            <Box>TEST</Box>
-          )}
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={50}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 3000 }}
+            loop={true}
+            style={{ width: "100%", height: "400px" }}
+          >
+            {images.map((img, index) => (
+              <SwiperSlide key={index}>
+                {console.log("img", img)}
+                <img
+                  src={img.src}
+                  loading="lazy"
+                  alt={`Slide ${index + 1}`}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </Box>
       </Box>
       <Box
@@ -402,7 +417,7 @@ const HomeView = () => {
               }).map((_, idx) => (
                 <Grid item xs={12} sm={6} md={3} key={`empty-${idx}`} />
               ))}
-            </Grid> 
+            </Grid>
           </Box>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>

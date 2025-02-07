@@ -113,7 +113,6 @@ const HomeHeader = () => {
     };
     getData();
   }, [selectedCategory]);
-
   function saveData(db, data) {
     console.log("Function Triggered");
 
@@ -123,28 +122,30 @@ const HomeHeader = () => {
     const request = store.add(data);
     request.onsuccess = () => {
       console.log("Data saved successfully");
-      getAllData(db);
+      getAllData(db); // Refresh the data display
+
+      // Update the total immediately
+      const newTotal = (total || 0) + data.productPrice * data.quantity;
+      setTotal(newTotal);
     };
 
     request.onerror = (event) => {
       console.error("Error saving data:", event.target.errorCode);
     };
   }
+
   function getAllData(db) {
     const transaction = db.transaction(["myStore"], "readonly");
     const store = transaction.objectStore("myStore");
 
     const request = store.getAll();
     request.onsuccess = () => {
-      console.log("All data:", request.result);
-      setQouteData(request.result);
-      const totalPrice = qoutData?.reduce((accumulator, product) => {
-        let price = parseFloat(product.productPrice);
-        console.log("PR", product.quantity);
-        if (product.quantity > 1) {
-          price = price * product.quantity;
-        }
-        return accumulator + (isNaN(price) ? 0 : price); // Handle invalid prices
+      const retrievedData = request.result;
+      setQouteData(retrievedData);
+
+      const totalPrice = retrievedData.reduce((accumulator, product) => {
+        const price = parseFloat(product.productPrice) * product.quantity;
+        return accumulator + (isNaN(price) ? 0 : price);
       }, 0);
 
       setTotal(totalPrice);
@@ -154,6 +155,7 @@ const HomeHeader = () => {
       console.error("Error retrieving data:", event.target.errorCode);
     };
   }
+
   const handleDelete = async (id) => {
     if (!db) {
       toast.error("Database is not initialized!");
@@ -161,16 +163,20 @@ const HomeHeader = () => {
     }
 
     try {
-      // Open a transaction for the "myStore" object store
       const transaction = db.transaction(["myStore"], "readwrite");
       const objectStore = transaction.objectStore("myStore");
 
-      // Attempt to delete the record with the specified id
       const deleteRequest = objectStore.delete(id);
 
       deleteRequest.onsuccess = () => {
         console.log(`Data with id ${id} deleted successfully.`);
-        // Optionally refresh the data after deletion
+
+        // Update the total by subtracting the deleted item’s price
+        const deletedProduct = qoutData.find((item) => item.id === id);
+        const newTotal =
+          total - deletedProduct.productPrice * deletedProduct.quantity;
+        setTotal(newTotal > 0 ? newTotal : 0);
+
         getAllData(db); // Refresh data display
       };
 
@@ -183,6 +189,7 @@ const HomeHeader = () => {
       toast.error("Something went wrong while deleting!");
     }
   };
+
   const columns = [
     {
       field: "productName",
@@ -220,7 +227,7 @@ const HomeHeader = () => {
           <Box
             sx={{
               display: "flex",
-              
+
               justifyContent: "space-around",
             }}
           >
