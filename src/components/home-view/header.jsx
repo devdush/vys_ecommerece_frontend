@@ -36,6 +36,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DOMPurify from "dompurify";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { DataGrid } from "@mui/x-data-grid";
+import { useSelector } from "react-redux";
+import { getCart } from "../../services/Cart/getCartDetails";
 const HomeHeader = () => {
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
@@ -47,12 +49,14 @@ const HomeHeader = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState({});
   const [db, setDb] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [total, setTotal] = useState();
 
   const [qoutData, setQouteData] = useState();
+
+  const { user } = useSelector((state) => state.auth);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
 
   const handleIncrease = () => {
     setQuantity((prev) => prev + 1);
@@ -114,8 +118,6 @@ const HomeHeader = () => {
     getData();
   }, [selectedCategory]);
   function saveData(db, data) {
-    console.log("Function Triggered");
-
     const transaction = db.transaction(["myStore"], "readwrite");
     const store = transaction.objectStore("myStore");
 
@@ -333,12 +335,17 @@ const HomeHeader = () => {
             <LocalShippingOutlinedIcon sx={{ paddingRight: "5px" }} />
             <Typography sx={{ fontSize: "15px" }}>Track Your Order</Typography>
           </Box>
-          <Box name="login" sx={{ display: "flex", paddingRight: "10px" }}>
-            <PersonOutlineOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Link to={"auth/login"}>
-              <Typography sx={{ fontSize: "15px" }}>Login</Typography>
-            </Link>
-          </Box>
+          <Link
+            to={"auth/login"}
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            <Box name="login" sx={{ display: "flex", paddingRight: "10px" }}>
+              <PersonOutlineOutlinedIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>
+                {user ? user.firstName : "Login"}
+              </Typography>
+            </Box>
+          </Link>
         </Box>
       </Box>
       <Box
@@ -428,10 +435,17 @@ const HomeHeader = () => {
             <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
             <Typography sx={{ fontSize: "15px" }}>Get A Quotation</Typography>
           </Box>
-          <Box name="cart" sx={{ display: "flex", paddingRight: "10px" }}>
-            <ShoppingCartOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Typography sx={{ fontSize: "15px" }}>LKR 0.00</Typography>
-          </Box>
+          <Link
+            to={"/cart-view/cart"}
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            <Box name="cart" sx={{ display: "flex", paddingRight: "10px" }}>
+              <ShoppingCartOutlinedIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>
+                LKR {totalPrice.toFixed(2)}
+              </Typography>
+            </Box>
+          </Link>
         </Box>
       </Box>
       <Modal
@@ -499,9 +513,6 @@ const HomeHeader = () => {
                 }}
                 validationSchema={validationSchema}
                 onSubmit={async (values, { setSubmitting }) => {
-                  console.log(values, quantity); // Product object and quantity will be logged here
-
-                  // Use `find` to locate the selected product by matching `_id`
                   const selProduct = products.find(
                     (product) => product._id === values.product
                   );

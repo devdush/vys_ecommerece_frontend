@@ -30,7 +30,7 @@ const SidebarComponent = () => {
       try {
         // Fetch main categories
         const mainCategoriesResponse = await getMainCategory();
-
+        
         const mainCategories = mainCategoriesResponse.data.data;
         console.log(mainCategories);
 

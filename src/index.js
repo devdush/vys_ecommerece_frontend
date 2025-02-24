@@ -15,9 +15,11 @@ import {
   combineReducers,
   createStore,
 } from "@reduxjs/toolkit";
+import cartReducer from "./store/reducer/cart";
 
 const rootReducer = combineReducers({
   auth: authLoginReducer,
+  cart: cartReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 

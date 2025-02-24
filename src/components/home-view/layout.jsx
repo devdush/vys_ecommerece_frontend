@@ -222,7 +222,7 @@ const HomeView = () => {
           >
             {images.map((img, index) => (
               <SwiperSlide key={index}>
-                {console.log("img", img)}
+               
                 <img
                   src={img.src}
                   loading="lazy"

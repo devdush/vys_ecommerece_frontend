@@ -5,12 +5,21 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useNavigate, useParams } from "react-router-dom";
+import addToCart from "../../services/add-to-cart/addToCart";
+import { useDispatch } from "react-redux";
+import { GetCartData } from "../../store/action/cart";
+import { useSelector } from "react-redux";
 
 const ShopHome = () => {
   const navigate = useNavigate();
   const [ProductData, setProductData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Access the subcategory ID from the URL
+  const user = sessionStorage.getItem("user");
+  const parsedUser = user ? JSON.parse(user) : null;
+  const userID = parsedUser ? parsedUser.id : null;
+  const dispatch = useDispatch();
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
 
   useEffect(() => {
     const getData = async () => {
@@ -27,7 +36,11 @@ const ShopHome = () => {
     };
     getData();
   }, [id]);
-
+  useEffect(() => {
+    if (userID) {
+      dispatch(GetCartData(userID)); // Fetch cart data only if user is logged in
+    }
+  }, [dispatch, userID]);
   const handleCardClick = (id) => {
     // Navigate to the product details page
     console.log(`Card clicked for product ID: ${id}`);
@@ -130,8 +143,7 @@ const ShopHome = () => {
                   color: "white",
                 }}
               >
-                LKR{" "}
-                {product?.sales_price
+                LKR {product?.sales_price
                   ? new Intl.NumberFormat("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -139,9 +151,17 @@ const ShopHome = () => {
                   : "0.00"}
               </Typography>
               <Box sx={{ display: "flex", gap: "10px" }}>
-                <IconButton sx={{ color: "white", backgroundColor: "#000000" }}>
+                <IconButton
+                  sx={{ color: "white", backgroundColor: "#000000" }}
+                  onClick={async (event) => {
+                    event.stopPropagation(); // Prevent navigation
+                    await addToCart(product._id, 1); // Add 1 quantity to the cart
+                    dispatch(GetCartData(userID)); // Fetch updated cart data
+                  }}
+                >
                   <AddShoppingCartIcon />
                 </IconButton>
+
                 <IconButton sx={{ color: "white", backgroundColor: "#000000" }}>
                   <FavoriteBorderIcon />
                 </IconButton>

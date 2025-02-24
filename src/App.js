@@ -34,20 +34,28 @@ import CreateBrands from "./pages/admin-view/create-brands";
 import ProductLayout from "./components/product-view/layout";
 import CreateWarranty from "./pages/admin-view/create-warranty";
 import { Box, CircularProgress } from "@mui/material";
+import { GetCartData } from "./store/action/cart";
+import CartPage from "./components/cart-view/cart";
+import CartLayout from "./components/cart-view/layout";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
   );
-  const dispatch = useDispatch();
+ const userSaved = sessionStorage.getItem("user");
+  const parsedUser = userSaved ? JSON.parse(userSaved) : null;
+  const userID = parsedUser ? parsedUser.id : null;
 
+  const dispatch = useDispatch();
   useEffect(() => {
     const token = JSON.parse(sessionStorage.getItem("token"));
-    console.log("sad", token);
-
     dispatch(CheckUserAuth(token));
   }, [dispatch]);
-
+useEffect(() => {
+    if (userID) {
+      dispatch(GetCartData(userID)); // Fetch cart data only if user is logged in
+    }
+  }, [dispatch, userID]);
   if (isLoading) {
     return (
       <Box
@@ -117,6 +125,17 @@ function App() {
         >
           <Route path="checkout" element={<Checkout />} />
           <Route path="account" element={<Account />} />
+          <Route path="cart" element={<CartPage />} />
+        </Route>
+        <Route
+          path="/cart-view"
+          element={
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+              <CartLayout />
+            </CheckAuth>
+          }
+        >
+          <Route path="cart" element={<CartPage />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -14,6 +14,7 @@ export const LoginUser = (data) => {
 
         const token = response.data.token;
         sessionStorage.setItem("token", JSON.stringify(token));
+        sessionStorage.setItem("user", JSON.stringify(user));
         dispatch({
           type: "LOGIN_USER",
           user: user,
@@ -42,6 +43,7 @@ export const CheckUserAuth = (token) => {
       const user = response.data.user;
       const isAuthenticated = response.data.success;
       if (response?.data?.success) {
+        sessionStorage.setItem("user", JSON.stringify(user));
         dispatch({
           type: "CHECK_AUTH",
           user: user,
@@ -55,6 +57,7 @@ export const CheckUserAuth = (token) => {
           isAuthenticated: isAuthenticated,
           isLoading: false,
         });
+        sessionStorage.clear();
       }
     } catch (error) {
       console.log("error");
