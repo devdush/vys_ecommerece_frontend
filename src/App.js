@@ -42,7 +42,7 @@ function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
   );
- const userSaved = sessionStorage.getItem("user");
+  const userSaved = sessionStorage.getItem("user");
   const parsedUser = userSaved ? JSON.parse(userSaved) : null;
   const userID = parsedUser ? parsedUser.id : null;
 
@@ -51,7 +51,7 @@ function App() {
     const token = JSON.parse(sessionStorage.getItem("token"));
     dispatch(CheckUserAuth(token));
   }, [dispatch]);
-useEffect(() => {
+  useEffect(() => {
     if (userID) {
       dispatch(GetCartData(userID)); // Fetch cart data only if user is logged in
     }
@@ -113,7 +113,7 @@ useEffect(() => {
           <Route path="home/:id" element={<ShopHome />} />
         </Route>
         <Route path="/shop" element={<ProductLayout />}>
-          <Route path="products/:id" element={<Products />} />
+          <Route path="products/:id" element={<Products user={user}  />} />
         </Route>
         <Route
           path="/shop"
@@ -135,7 +135,7 @@ useEffect(() => {
             </CheckAuth>
           }
         >
-          <Route path="cart" element={<CartPage />} />
+          <Route path="cart" element={<CartPage user={user} />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

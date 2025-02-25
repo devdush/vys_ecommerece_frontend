@@ -1,7 +1,8 @@
+import { toast } from "react-toastify";
 import { GetCartData } from "../../store/action/cart";
 import { addToCartService } from "./addtoCartServices";
 import { useDispatch } from "react-redux";
-const addToCart = async (itemId, quantityToAdd) => {
+const addToCart = async (itemId, quantityToAdd, onHand) => {
   try {
     const user = sessionStorage.getItem("user");
     if (user) {
@@ -13,10 +14,13 @@ const addToCart = async (itemId, quantityToAdd) => {
           productId: itemId,
           quantity: quantityToAdd,
         };
-        console.log("Adding to cart:", cartItem);
-
         const response = await addToCartService(cartItem);
-    
+        console.log(response);
+        if (response?.status === 200) {
+          toast.success("Item successfully added to the cart");
+        } else {
+          toast.error(response.data.message);
+        }
       } else {
         console.error("User ID is missing");
         window.location.href = "/auth/login"; // Navigate to login page
@@ -26,7 +30,7 @@ const addToCart = async (itemId, quantityToAdd) => {
       window.location.href = "/auth/login"; // Navigate to login page
     }
   } catch (error) {
-    console.log(error);
+    toast.error(`Can't add to cart.Only ${onHand} items are available.`);
   }
 };
 export default addToCart;

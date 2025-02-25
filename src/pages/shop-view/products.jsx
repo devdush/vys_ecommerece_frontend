@@ -24,10 +24,11 @@ import * as Yup from "yup";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DOMPurify from "dompurify";
+import { addToCartService } from "../../services/add-to-cart/addtoCartServices";
 
 const validationSchema = Yup.object({});
 
-const Products = () => {
+const Products = ({ user }) => {
   const theme = useTheme();
   const [ProductData, setProductData] = useState([]);
   const [imageArray, setImageArray] = useState([]);
@@ -85,7 +86,6 @@ const Products = () => {
           response.data.data.defaultImage,
           ...response.data.data.otherImages,
         ];
-        console.log(response.data.data);
         setDefaultImg(response.data.data.defaultImage);
         setImageArray(imgArray);
       } catch (error) {
@@ -96,7 +96,12 @@ const Products = () => {
   }, []);
 
   const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
+    console.log(user);
+    if (quantity < ProductData.onHand) {
+      setQuantity((prev) => prev + 1);
+    } else {
+      toast.warning(`Only ${ProductData.onHand} items are available.`);
+    }
   };
 
   const handleDecrease = () => {
@@ -235,10 +240,7 @@ const Products = () => {
               }}
             />
 
-            <Typography
-              variant="h7"
-              sx={{ fontWeight: "400", color: "white" }}
-            >
+            <Typography variant="h7" sx={{ fontWeight: "400", color: "white" }}>
               SKU : {ProductData?.SKU}
             </Typography>
             {ProductData?.warranty?.duration != "No Warranty" ? (
@@ -261,7 +263,7 @@ const Products = () => {
               {/* Sales Price */}
               <Typography
                 variant="h4"
-                sx={{ fontWeight: "400",  color: "white" }}
+                sx={{ fontWeight: "400", color: "white" }}
               >
                 LKR{" "}
                 {ProductData?.sales_price
@@ -277,7 +279,7 @@ const Products = () => {
                 <Box
                   sx={{
                     position: "relative",
-                 
+
                     display: "inline-block",
                   }}
                 >
@@ -329,6 +331,13 @@ const Products = () => {
               onSubmit={async (values, { setSubmitting }) => {
                 setSubmitting(true);
                 try {
+                  const obj = {
+                    productId: ProductData._id,
+                    quantity: quantity,
+                    userId: user.id,
+                  };
+                  const response = await addToCartService(obj);
+                  console.log(response);
                 } catch (error) {
                   toast.error(
                     "Something Went Wrong While Adding New Main Category!"
@@ -350,7 +359,6 @@ const Products = () => {
                   style={{
                     display: "flex",
                     justifyContent: "left",
-                 
                   }}
                 >
                   {/* Left Column - Form Section */}
@@ -362,7 +370,7 @@ const Products = () => {
                       gap: "10px",
                     }}
                   >
-                    <FormLabel sx={{ display: "flex", color: "white" }}>
+                    {/* <FormLabel sx={{ display: "flex", color: "white" }}>
                       Color
                     </FormLabel>
                     <Select
@@ -397,7 +405,7 @@ const Products = () => {
 
                     {touched.color && errors.color && (
                       <FormHelperText error>{errors.color}</FormHelperText>
-                    )}
+                    )} */}
                     <FormLabel sx={{ display: "flex", color: "white" }}>
                       Quantity
                     </FormLabel>

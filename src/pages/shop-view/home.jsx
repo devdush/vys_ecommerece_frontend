@@ -143,7 +143,8 @@ const ShopHome = () => {
                   color: "white",
                 }}
               >
-                LKR {product?.sales_price
+                LKR{" "}
+                {product?.sales_price
                   ? new Intl.NumberFormat("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -155,7 +156,7 @@ const ShopHome = () => {
                   sx={{ color: "white", backgroundColor: "#000000" }}
                   onClick={async (event) => {
                     event.stopPropagation(); // Prevent navigation
-                    await addToCart(product._id, 1); // Add 1 quantity to the cart
+                    await addToCart(product._id, 1, product.onHand); // Add 1 quantity to the cart
                     dispatch(GetCartData(userID)); // Fetch updated cart data
                   }}
                 >
