@@ -5,6 +5,7 @@ import { TextField, Button, Typography, Box } from "@mui/material";
 import register, { registerUser } from "../../services/auth/register";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Footer from "../../components/home-view/footer";
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("First name is required"),
@@ -30,7 +31,7 @@ const validationSchema = Yup.object({
 const AuthRegister = () => {
   const navigate = useNavigate();
   return (
-    <Box sx={{ display: "grid", placeItems: "center", p: 5 }}>
+    <Box>
       <Formik
         initialValues={{
           firstName: "",
@@ -69,216 +70,247 @@ const AuthRegister = () => {
         }}
       >
         {({ isSubmitting, handleChange, handleBlur, values }) => (
-          <Box sx={{ width: "100%", maxWidth: 500 }}>
-            <Typography
-              variant="h4"
-              sx={{ color: "#f0f0f0", mb: 2, textAlign: "center" }}
-            >
-              Register
-            </Typography>
-            <input type="text" />
+          <Box>
             <Form>
-              <TextField
-                label="First Name *"
-                name="firstName"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.firstName}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="firstName"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Last Name *"
-                name="lastName"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.lastName}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="lastName"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Email Address *"
-                name="email"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.email}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Primary Phone Number *"
-                name="primaryphonenumber"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.primaryphonenumber}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="primaryphonenumber"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Secondary Phone Number"
-                name="secondaryphonenumber"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.secondaryphonenumber}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="secondaryphonenumber"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Password *"
-                name="password"
-                type="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <TextField
-                label="Re-Enter Password *"
-                name="repassword"
-                type="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.repassword}
-                fullWidth
-                sx={{
-                  mb: 3,
-                  border: "1px solid white",
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "white",
-                    opacity: 1, // Ensures the color is not faded
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white", // To set the label color
-                  },
-                }}
-                variant="outlined"
-              />
-              <ErrorMessage
-                name="repassword"
-                component="div"
-                style={{ color: "red" }}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2, py: 1.5 }}
-                disabled={isSubmitting}
+              <Typography
+                variant="h4"
+                sx={{ color: "#f0f0f0", textAlign: "center" }}
               >
                 Register
-              </Button>
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  jnustifyContent: "space-between",
+                  margin: "40px",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    flex: 1,
+                    margin: "40px",
+                  }}
+                >
+                  <TextField
+                    label="First Name"
+                    name="firstName"
+                    type="text"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.firstName}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="firstName"
+                    component="div"
+                  />
+                  <TextField
+                    label="Last Name"
+                    name="lastName"
+                    type="text"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.lastName}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="lastName"
+                    component="div"
+                  />
+                  <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="email"
+                    component="div"
+                  />
+                  <TextField
+                    label="Primary Phone Number"
+                    name="primaryphonenumber"
+                    type="text"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.primaryphonenumber}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="primaryphonenumber"
+                    component="div"
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    flex: 1,
+                    margin: "40px",
+                  }}
+                >
+                  <TextField
+                    label="Secondary Phone Number"
+                    name="secondaryphonenumber"
+                    type="text"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.secondaryphonenumber}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="secondaryphonenumber"
+                    component="div"
+                  />
+                  <TextField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="password"
+                    component="div"
+                  />
+                  <TextField
+                    label="Re-enter Password"
+                    name="repassword"
+                    type="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.repassword}
+                    fullWidth
+                    sx={{
+                      border: "1px solid white",
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "white",
+                        opacity: 1, // Ensures the color is not faded
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "white", // To set the label color
+                      },
+                      "& .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.css-1blp12k-MuiInputBase-root-MuiOutlinedInput-root ":
+                        { color: "white" },
+                    }}
+                    variant="outlined"
+                  />
+                  <ErrorMessage
+                    style={{ color: "red" }}
+                    name="repassword"
+                    component="div"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    variant="contained"
+                    sx={{ mt: 3 }}
+                  >
+                    Register
+                  </Button>
+                </Box>
+              </Box>
             </Form>
             <Typography sx={{ mt: 3, color: "#f0f0f0", textAlign: "center" }}>
-              Already have an account? <a href="Sinin">Login</a>
+              Already have an account? <a href="/auth/login">Login</a>
             </Typography>
           </Box>
         )}
       </Formik>
+      <Footer />
     </Box>
   );
 };

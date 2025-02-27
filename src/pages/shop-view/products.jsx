@@ -330,15 +330,24 @@ const Products = ({ user }) => {
               validationSchema={validationSchema}
               onSubmit={async (values, { setSubmitting }) => {
                 setSubmitting(true);
+                console.log(quantity);
+
                 try {
-                  const obj = {
-                    productId: ProductData._id,
-                    quantity: quantity,
-                    userId: user.id,
-                  };
-                  const response = await addToCartService(obj);
-                  console.log(response);
+                  if (user && user.id) {
+                    const userID = user.id;
+                    const obj = {
+                      productId: ProductData._id,
+                      quantity: quantity,
+                      userId: userID,
+                    };
+                    const response = await addToCartService(obj);
+                    console.log(response);
+                  } else {
+                    console.error("User ID is missing");
+                    window.location.href = "/auth/login"; // Navigate to login page
+                  }
                 } catch (error) {
+                  console.log(error);
                   toast.error(
                     "Something Went Wrong While Adding New Main Category!"
                   );

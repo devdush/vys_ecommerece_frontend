@@ -111,6 +111,13 @@ const AuthLogin = () => {
               >
                 Login
               </Button>
+              <Typography sx={{ color: "white" }}>
+                Don't Have an Account?
+                <a href="/auth/register" style={{ color: "blue" }}>
+                  {" "}
+                  Register
+                </a>
+              </Typography>
             </Box>
           </Form>
         )}

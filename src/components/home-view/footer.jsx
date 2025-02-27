@@ -26,12 +26,19 @@ const Footer = () => {
         sx={{ display: "flex", mt: "20px", borderBottom: "1px solid white" }}
       >
         <Box name="column" sx={{ flex: 1 }}>
-          <Box
-            name="companyLogo"
-            sx={{ display: "flex", flex: 1, padding: "10px" }}
-          >
-            <img alt="Company Logo" width="50%" src={logo} />
-          </Box>
+          <a href="/">
+            <Box
+              name="companyLogo"
+              sx={{
+                display: "flex",
+                flex: 1,
+                padding: "10px",
+                justifyContent: "left",
+              }}
+            >
+              <img alt="Company Logo" width="50%" src={logo} />
+            </Box>
+          </a>
           <Box sx={{ display: "flex", padding: "10px", alignItems: "center" }}>
             <HeadsetMicOutlinedIcon sx={{ fontSize: "45px" }} />
             <Typography

@@ -125,7 +125,7 @@ const CartPage = ({ user }) => {
                 </Typography>
                 <Typography>Qty{item.quantity}</Typography>
               </Box>
-              <IconButton onClick={() => handleDelete(item)}>
+              <IconButton sx={{height:"60px"}} onClick={() => handleDelete(item)}>
                 <DeleteIcon color="error" />
               </IconButton>
             </Box>
@@ -162,7 +162,7 @@ const CartPage = ({ user }) => {
           }}
         >
           <span>Item(s) discount:</span>
-          <span>-LKR {totalPrice.toFixed(2)}</span>
+          <span>-LKR 0.00</span>
         </Typography>
 
         <Divider sx={{ my: 2 }} />

@@ -22,7 +22,6 @@ import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlin
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import logo from "./vys.png";
 import { Link } from "react-router-dom";
-import GetQuotation from "./getQoutationModal";
 import { Modal } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { Form, Formik } from "formik";
@@ -33,11 +32,11 @@ import { getProductsByCategory } from "../../services/product/getProductByCatego
 import { initDB } from "../../services/indexedDBService";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import DOMPurify from "dompurify";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
-import { getCart } from "../../services/Cart/getCartDetails";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 const HomeHeader = () => {
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
@@ -346,6 +345,23 @@ const HomeHeader = () => {
               </Typography>
             </Box>
           </Link>
+          {user ? (
+            <Box
+              name="logout"
+              sx={{ display: "flex", paddingRight: "10px", cursor: "pointer" }}
+              onClick={() => {
+                sessionStorage.clear();
+                window.location.reload();
+                toast.success("Logged out successfully");
+
+              }}
+            >
+              <LogoutIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>Logout</Typography>
+            </Box>
+          ) : (
+            ""
+          )}
         </Box>
       </Box>
       <Box

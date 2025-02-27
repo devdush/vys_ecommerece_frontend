@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
   useTheme,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 
 import SidebarComponent from "../common/sidebar";
@@ -34,6 +34,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { useNavigate } from "react-router-dom";
 
 const HomeView = () => {
   const theme = useTheme();
@@ -44,7 +45,7 @@ const HomeView = () => {
   const [specialOfferProductData, setSpecialOfferProductData] = useState([]);
   const [ProductData, setProductData] = useState([]);
   const [isReady, setIsReady] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setIsReady(true); // Trigger re-render after the component mounts
   }, []);
@@ -62,10 +63,8 @@ const HomeView = () => {
         setOnSaleProductData(onSaleProRes.data.data);
         setTopRatedProductData(topRatedProRes.data.data);
         setSpecialOfferProductData(specialOfferProRes.data.data);
- 
       } catch (error) {
         toast.error("Something went wrong while fetching initial data");
-       
       }
     };
     getData();
@@ -118,23 +117,58 @@ const HomeView = () => {
   ];
   const brandImages = [
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/1.jpg",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Acer.png",
       alt: "Image 1",
       caption: "This is the first image",
     },
 
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1666802278.png",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Apple.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1666802253.png",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Asus.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://wdsl.lk/sample/vysv2/media/image/1666802292.png",
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Biostart.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Dell.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/hcl.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/hp.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/intel.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/lenevo.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/nvidia.png",
+      alt: "Image 2",
+      caption: "This is the second image",
+    },
+    {
+      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/samsung.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
@@ -186,7 +220,11 @@ const HomeView = () => {
       },
     ],
   };
-
+  const handleButtonClick = (id) => {
+    // Navigate to the product details page
+    console.log(`Card clicked for product ID: ${id}`);
+    navigate(`/shop/products/${id}`); // Example navigation
+  };
   return (
     <Box
       name="container"
@@ -222,7 +260,6 @@ const HomeView = () => {
           >
             {images.map((img, index) => (
               <SwiperSlide key={index}>
-               
                 <img
                   src={img.src}
                   loading="lazy"
@@ -254,13 +291,21 @@ const HomeView = () => {
         >
           <Grid container spacing={2}>
             {featuredProductData.slice(0, 9).map((product, index) => (
-              <Grid item xs={12} sm={6} md={3} key={product._id || index}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={3}
+                key={product._id || index}
+                sx={{ mb: "20px" }}
+              >
                 <Box
                   sx={{
                     backgroundColor: "#212121",
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
+
                     alignItems: "center",
                     justifyContent: "space-between",
                     height: "100%", // Ensure consistent height
@@ -294,7 +339,11 @@ const HomeView = () => {
                   >
                     LKR {product.sales_price}
                   </Typography>
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleButtonClick(product._id)}
+                  >
                     Shop Now
                   </Button>
                 </Box>
@@ -389,7 +438,11 @@ const HomeView = () => {
                     >
                       LKR {product.sales_price}
                     </Typography>
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleButtonClick(product._id)}
+                    >
                       Shop Now
                     </Button>
                   </Box>
@@ -454,7 +507,11 @@ const HomeView = () => {
                     >
                       LKR {product.sales_price}
                     </Typography>
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleButtonClick(product._id)}
+                    >
                       Shop Now
                     </Button>
                   </Box>
@@ -519,7 +576,11 @@ const HomeView = () => {
                     >
                       LKR {product.sales_price}
                     </Typography>
-                    <Button variant="contained" color="primary">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleButtonClick(product._id)}
+                    >
                       Shop Now
                     </Button>
                   </Box>
