@@ -37,6 +37,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { GetCartData } from "./store/action/cart";
 import CartPage from "./components/cart-view/cart";
 import CartLayout from "./components/cart-view/layout";
+import VerifyEmail from "./components/common/verify-email";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -77,6 +78,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeView />} />
 
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route
           path="/auth"
           element={
@@ -113,7 +115,7 @@ function App() {
           <Route path="home/:id" element={<ShopHome />} />
         </Route>
         <Route path="/shop" element={<ProductLayout />}>
-          <Route path="products/:id" element={<Products user={user}  />} />
+          <Route path="products/:id" element={<Products user={user} />} />
         </Route>
         <Route
           path="/shop"

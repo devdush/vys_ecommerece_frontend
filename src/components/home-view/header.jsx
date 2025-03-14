@@ -335,7 +335,7 @@ const HomeHeader = () => {
             <Typography sx={{ fontSize: "15px" }}>Track Your Order</Typography>
           </Box>
           <Link
-            to={"auth/login"}
+            to={"/auth/login"}
             style={{ textDecoration: "none", color: "white" }}
           >
             <Box name="login" sx={{ display: "flex", paddingRight: "10px" }}>

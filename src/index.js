@@ -16,10 +16,14 @@ import {
   createStore,
 } from "@reduxjs/toolkit";
 import cartReducer from "./store/reducer/cart";
+import brandsReducer from "./store/reducer/brands";
+import productsReducer from "./store/reducer/getProductsByFilter";
 
 const rootReducer = combineReducers({
   auth: authLoginReducer,
   cart: cartReducer,
+  brand: brandsReducer,
+  product: productsReducer
 });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 

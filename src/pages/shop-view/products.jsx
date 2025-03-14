@@ -81,6 +81,7 @@ const Products = ({ user }) => {
       const id = pathname.split("/").pop();
       try {
         const response = await getProductsById(id);
+        console.log("res",response)
         setProductData(response.data.data);
         const imgArray = [
           response.data.data.defaultImage,

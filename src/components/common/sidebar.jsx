@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 import { getMainCategory } from "../../services/main-category/getMainCategory";
 import { getCategoriesByMainCategory } from "../../services/main-category/getCategoriesByMainCategory";
+import { useSelector } from "react-redux";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   return (
     <MenuItem
@@ -25,6 +26,8 @@ const SidebarComponent = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selected, setSelected] = useState("Dashboard");
   const [loading, setLoading] = useState (true)
+
+  
   useEffect(() => {
     const fetchMenuData = async () => {
       try {

@@ -9,42 +9,57 @@ import addToCart from "../../services/add-to-cart/addToCart";
 import { useDispatch } from "react-redux";
 import { GetCartData } from "../../store/action/cart";
 import { useSelector } from "react-redux";
+import { setBrandsByCategorizedProducts } from "../../store/action/brands";
+import { getProductsByFilter } from "../../store/action/getProductsByFilter";
 
 const ShopHome = () => {
   const navigate = useNavigate();
-  const [ProductData, setProductData] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const { id } = useParams(); // Access the subcategory ID from the URL
+  const { id } = useParams();
   const user = sessionStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
   const userID = parsedUser ? parsedUser.id : null;
   const dispatch = useDispatch();
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+  const products = useSelector((state) => state.product.products);
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
       try {
-        const response = await getProductsByCategory(id);
-        setProductData(response.data.data || []); // Fallback to an empty array if data is undefined
+        const obj = {
+          id: id,
+          brand: "",
+          minPrice: "1000",
+          maxPrice: "170000",
+        };
+        await dispatch(getProductsByFilter(obj));
       } catch (error) {
         console.error("Error while fetching products:", error);
-        setProductData([]); // Set an empty array on error
       } finally {
         setLoading(false);
       }
     };
+
     getData();
-  }, [id]);
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      const brandTitles = products.map((item) => item.brand.brandTitle);
+      dispatch(setBrandsByCategorizedProducts(brandTitles));
+    }
+  }, [products, dispatch]);
+
   useEffect(() => {
     if (userID) {
-      dispatch(GetCartData(userID)); // Fetch cart data only if user is logged in
+      dispatch(GetCartData(userID));
     }
   }, [dispatch, userID]);
   const handleCardClick = (id) => {
-    // Navigate to the product details page
     console.log(`Card clicked for product ID: ${id}`);
-    navigate(`/shop/products/${id}`); // Example navigation
+    navigate(`/shop/products/${id}`);
   };
 
   if (loading) {
@@ -55,7 +70,7 @@ const ShopHome = () => {
     );
   }
 
-  if (!ProductData.length) {
+  if (!products.length) {
     return (
       <Box sx={{ padding: "20px", textAlign: "center", color: "white" }}>
         <Typography variant="h6">No products available</Typography>
@@ -74,7 +89,7 @@ const ShopHome = () => {
           padding: "10px",
         }}
       >
-        {ProductData.map((product) => (
+        {products.map((product) => (
           <Box
             key={product._id}
             name="cardContainer"

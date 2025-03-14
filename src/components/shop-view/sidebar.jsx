@@ -6,7 +6,7 @@ import {
   Sidebar,
   SubMenu,
 } from "react-pro-sidebar";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -34,6 +34,8 @@ import { getMainCategory } from "../../services/main-category/getMainCategory";
 import { getCategoriesByMainCategory } from "../../services/main-category/getCategoriesByMainCategory";
 import { ErrorMessage, Formik, Form } from "formik";
 import SearchIcon from "@mui/icons-material/Search";
+import { useDispatch, useSelector } from "react-redux";
+import { getProductsByFilter } from "../../store/action/getProductsByFilter";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -55,8 +57,9 @@ const ShopSidebarComponent = ({ userType, to }) => {
   const [menuItems, setMenuItems] = useState([]);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selected, setSelected] = useState("Dashboard");
-
-  const brands = ["Dell", "HP", "Lenovo"]; // List of brands
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const brands = useSelector((state) => state.brand.brands);
 
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -108,6 +111,19 @@ const ShopSidebarComponent = ({ userType, to }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const onButtonClick = async () => {
+    try {
+      const obj = {
+        id: id,
+        brand: "",
+        minPrice: "",
+        maxPrice: "",
+      };
+      await dispatch(getProductsByFilter(obj));
+    } catch (error) {
+      console.error("Error while fetching products:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -231,8 +247,19 @@ const ShopSidebarComponent = ({ userType, to }) => {
         <Box>
           <Formik
             initialValues={{ minPrice: "", maxPrice: "", brand: "" }}
-            onSubmit={(values) => {
-              console.log("Form Values:", values);
+            onSubmit={async (values) => {
+              console.log("Form Values:", values, id);
+              try {
+                const obj = {
+                  id: id,
+                  brand: values.brand,
+                  minPrice: values.minPrice,
+                  maxPrice: values.maxPrice,
+                };
+                await dispatch(getProductsByFilter(obj));
+              } catch (error) {
+                console.error("Error while fetching products:", error);
+              }
             }}
           >
             {({
@@ -386,13 +413,21 @@ const ShopSidebarComponent = ({ userType, to }) => {
                   >
                     Apply Filter
                   </Button>
+                  <Button
+                    onClick={onButtonClick}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2, py: 1.5,bgcolor:"#e29402" }}
+                  >
+                    Clear Filter
+                  </Button>
                 </Form>
               </Box>
             )}
           </Formik>
         </Box>
       </Box>
-  
     </Box>
   );
 };
