@@ -59,7 +59,7 @@ const ShopHome = () => {
   }, [dispatch, userID]);
   const handleCardClick = (id) => {
     console.log(`Card clicked for product ID: ${id}`);
-    navigate(`/shop/products/${id}`);
+    navigate(`/shop/products/?id=${id}`);
   };
 
   if (loading) {
@@ -84,7 +84,13 @@ const ShopHome = () => {
         name="row"
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)", // Create 4 equal columns
+          gridTemplateColumns: {
+            xs: "1fr", // 1 column for extra-small screens (mobile)
+            sm: "1fr", // 1 column for small screens (mobile)
+            md: "repeat(2, 1fr)", // 2 columns for medium screens (tablets)
+            lg: "repeat(3, 1fr)", // 3 columns for large screens
+            xl: "repeat(4, 1fr)", // 4 columns for extra-large screens
+          },
           gap: "20px",
           padding: "10px",
         }}

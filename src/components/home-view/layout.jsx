@@ -247,6 +247,7 @@ const HomeView = () => {
             borderRadius: 2,
             overflow: "hidden",
             boxShadow: theme.shadows[3],
+            display: { xs: "none", sm: "block" },
           }}
         >
           <Swiper
@@ -634,92 +635,7 @@ const HomeView = () => {
           </Slider>
         </Box>
       </Box>
-      <Box
-        name="newsletter"
-        sx={{
-          background: "#030138",
-          color: "white",
-          display: "flex",
-        }}
-      >
-        <Box
-          sx={{
-            width: "100%",
-            backgroundColor: "#004282",
-            display: "flex",
-            marginTop: "20px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flex: 2,
-              justifyContent: "center",
-              alignItems: "center",
 
-              fontSize: "18px",
-            }}
-          >
-            <ScheduleSendOutlinedIcon
-              sx={{ fontSize: "35px", padding: "10px" }}
-            />
-            <Typography variant="h6" sx={{ fontWeight: "300" }}>
-              Sign up to Newsletter and receive our latest updates and offers
-            </Typography>
-          </Box>
-          <Box
-            name="search"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flex: 1,
-              padding: "10px",
-            }}
-          >
-            <TextField
-              label="Email Address"
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton>
-                      <HowToRegOutlinedIcon
-                        sx={{ fontSize: "40px", color: "white" }}
-                      />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white", // Default border color
-                    borderTopRightRadius: "25px",
-                    borderBottomRightRadius: "25px",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white", // Border color on hover
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white", // Border color when focused
-                  },
-                  color: "white", // Ensures icon and label inherit text color
-                },
-                "& .MuiInputBase-input": {
-                  color: "white", // Changes user input text color
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white", // Label color
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "white", // Label color when focused
-                },
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
       <Footer />
     </Box>
   );

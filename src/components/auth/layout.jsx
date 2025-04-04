@@ -6,10 +6,9 @@ const AuthLayout = () => {
     <Box
       sx={{
         display: "flex",
-        height: "100vh",
-        width: "100%",
+        
         background: "#03002D",
-        justifyContent:"center"
+   
       }}
     >
       <Outlet />

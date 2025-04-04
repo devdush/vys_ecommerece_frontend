@@ -6,15 +6,16 @@ import {
   Button,
   TextField,
   IconButton,
-  Select,
   Divider,
+  Grid,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { MenuItem } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useSelector } from "react-redux";
 import { removeItemFromCart } from "../../services/Cart/deleteCartDetails";
+
 const CartPage = ({ user }) => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -27,6 +28,8 @@ const CartPage = ({ user }) => {
   });
 
   const cart = useSelector((state) => state.cart);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Check if screen size is small
 
   useEffect(() => {
     console.log("Cart items from Redux:", cart.cart);
@@ -86,11 +89,18 @@ const CartPage = ({ user }) => {
     .reduce((sum, item) => sum + item.totalItemPrice, 0);
 
   return (
-    <Box sx={{ display: "flex", gap: 3, p: 3 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        gap: 3,
+        p: 3,
+      }}
+    >
       {/* Left Side - Cart Items */}
       <Box sx={{ flex: 2, p: 2, bgcolor: "#f9f9f9", borderRadius: 2 }}>
         {cartItems.length !== 0 ? (
-          cartItems?.map((item) => (
+          cartItems.map((item) => (
             <Box
               key={item._id}
               sx={{
@@ -108,7 +118,7 @@ const CartPage = ({ user }) => {
               />
               <img
                 src={item.product.defaultImage}
-                alt="{item.name}"
+                alt={item.itemName}
                 style={{ width: 80, height: 80, borderRadius: 5 }}
               />
               <Box sx={{ ml: 2, flexGrow: 1, textAlign: "left" }}>
@@ -123,9 +133,12 @@ const CartPage = ({ user }) => {
                 <Typography sx={{ fontWeight: "bold", color: "#d32f2f" }}>
                   LKR {item.totalItemPrice.toFixed(2)}
                 </Typography>
-                <Typography>Qty{item.quantity}</Typography>
+                <Typography>Qty {item.quantity}</Typography>
               </Box>
-              <IconButton sx={{height:"60px"}} onClick={() => handleDelete(item)}>
+              <IconButton
+                sx={{ height: "60px" }}
+                onClick={() => handleDelete(item)}
+              >
                 <DeleteIcon color="error" />
               </IconButton>
             </Box>
@@ -134,6 +147,7 @@ const CartPage = ({ user }) => {
           <Typography sx={{ color: "red" }}>No items in cart</Typography>
         )}
       </Box>
+
       {/* Right Side - Order Summary */}
       <Box
         sx={{ flex: 1, p: 3, bgcolor: "#fff", borderRadius: 2, boxShadow: 1 }}
@@ -178,6 +192,7 @@ const CartPage = ({ user }) => {
           <span>Total:</span>
           <span>LKR {totalPrice.toFixed(2)}</span>
         </Typography>
+
         <Box mt={3}>
           <Typography variant="h6">Shipping Address</Typography>
           {Object.keys(shippingAddress).map((field) => (
@@ -193,6 +208,7 @@ const CartPage = ({ user }) => {
             />
           ))}
         </Box>
+
         <Button
           variant="contained"
           color="error"
@@ -205,8 +221,7 @@ const CartPage = ({ user }) => {
             textTransform: "none",
           }}
           onClick={handleCheckout}
-          // disabled={selectedItems.length === 0 || !isShippingAddressValid()}
-          disabled
+          disabled={selectedItems.length === 0 || !isShippingAddressValid()}
         >
           Last chance! Checkout ({selectedItems.length}){" "}
           <ShoppingCartIcon sx={{ ml: 1 }} />

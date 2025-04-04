@@ -36,8 +36,11 @@ import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import { DataGrid } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useTheme } from "@mui/material/styles"; // Import useTheme hook
 
 const HomeHeader = () => {
+  const theme = useTheme(); // Use the theme hook to get access to the theme object
+
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
     product: Yup.string().required("Title is required!"),
@@ -257,6 +260,9 @@ const HomeHeader = () => {
           justifyContent: "space-between",
           borderBottom: "1px solid white",
           flexWrap: "wrap",
+          [theme.breakpoints.down("sm")]: {
+            justifyContent: "center", // Center the items on mobile
+          },
         }}
       >
         <Box
@@ -267,6 +273,9 @@ const HomeHeader = () => {
             padding: "10px",
             flexGrow: 1,
             flexBasis: 200,
+            [theme.breakpoints.down("sm")]: {
+              justifyContent: "center", // Center the items on mobile
+            },
           }}
         >
           <Box name="facebook" sx={{ display: "flex", paddingRight: "10px" }}>
@@ -326,14 +335,27 @@ const HomeHeader = () => {
             flexBasis: 200,
           }}
         >
-          <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
-            <LocationOnOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Typography sx={{ fontSize: "15px" }}>Store Locator</Typography>
-          </Box>
-          <Box name="trackOrder" sx={{ display: "flex", paddingRight: "10px" }}>
+          <Link
+            to={"https://maps.app.goo.gl/CE92crfTG1E19ti38"}
+            target="blank"
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
+              <LocationOnOutlinedIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>Store Locator</Typography>
+            </Box>
+          </Link>
+          {/* <Box
+            name="trackOrder"
+            sx={{
+              display: "flex",
+              paddingRight: "10px",
+              display: { xs: "none", sm: "block" },
+            }}
+          >
             <LocalShippingOutlinedIcon sx={{ paddingRight: "5px" }} />
             <Typography sx={{ fontSize: "15px" }}>Track Your Order</Typography>
-          </Box>
+          </Box> */}
           <Link
             to={"/auth/login"}
             style={{ textDecoration: "none", color: "white" }}
@@ -353,7 +375,6 @@ const HomeHeader = () => {
                 sessionStorage.clear();
                 window.location.reload();
                 toast.success("Logged out successfully");
-
               }}
             >
               <LogoutIcon sx={{ paddingRight: "5px" }} />
@@ -386,7 +407,15 @@ const HomeHeader = () => {
             <img alt="Company Logo" width="50%" src={logo} />
           </Link>
         </Box>
-        <Box name="search" sx={{ display: "flex", flex: 1, padding: "10px" }}>
+        <Box
+          name="search"
+          sx={{
+            display: "flex",
+            flex: 1,
+            padding: "10px",
+            display: { xs: "none", sm: "block" },
+          }}
+        >
           <TextField
             label="Search Products"
             fullWidth
@@ -449,7 +478,14 @@ const HomeHeader = () => {
             }}
           >
             <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Typography sx={{ fontSize: "15px" }}>Get A Quotation</Typography>
+            <Typography
+              sx={{
+                fontSize: "15px",
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              Get A Quotation
+            </Typography>
           </Box>
           <Link
             to={"/cart-view/cart"}
@@ -457,7 +493,9 @@ const HomeHeader = () => {
           >
             <Box name="cart" sx={{ display: "flex", paddingRight: "10px" }}>
               <ShoppingCartOutlinedIcon sx={{ paddingRight: "5px" }} />
-              <Typography sx={{ fontSize: "15px" }}>
+              <Typography
+                sx={{ fontSize: "15px", display: { xs: "none", sm: "block" } }}
+              >
                 LKR {totalPrice.toFixed(2)}
               </Typography>
             </Box>
@@ -554,11 +592,21 @@ const HomeHeader = () => {
                   resetForm,
                 }) => (
                   <Form>
-                    <Box sx={{ display: "flex", gap: "10px" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "10px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: { xs: "column", sm: "row" },
+                        minWidth: { xs: "100%", sm: "300px", md: "350px" },
+                      }}
+                    >
                       {/* Category Select */}
                       <Select
                         sx={{
-                          textAlign: "left",
+                          width: { xs: "100%", sm: "300px", md: "350px" },
                           "& .MuiSelect-select": {
                             textAlign: "left",
                             border: "1px solid white",
@@ -567,17 +615,12 @@ const HomeHeader = () => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
-                          },
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            //  border: "1px solid white",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            //borderColor: "white",
+                            display: "block", // Important for text truncation to apply correctly
+                            width: "100%", // Prevents resizing based on value length
                           },
                           "& .MuiSelect-icon": {
                             color: "white",
                           },
-                          width: "350px",
                         }}
                         name="categoryId"
                         value={values.categoryId}
@@ -593,34 +636,31 @@ const HomeHeader = () => {
                         <MenuItem value="" disabled hidden>
                           Select a category
                         </MenuItem>
-                        {categories &&
-                          categories.map((category) => (
-                            <MenuItem key={category._id} value={category._id}>
-                              {category?.categoryTitle}
-                            </MenuItem>
-                          ))}
+                        {categories?.map((category) => (
+                          <MenuItem key={category._id} value={category._id}>
+                            {category?.categoryTitle}
+                          </MenuItem>
+                        ))}
                       </Select>
 
                       {/* Product Select */}
                       <Select
                         sx={{
-                          textAlign: "left",
+                          width: { xs: "100%", sm: "300px", md: "350px" },
                           "& .MuiSelect-select": {
                             textAlign: "left",
                             border: "1px solid white",
                             borderRadius: "0px",
                             color: "white",
-                          },
-                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            // border: "1px solid white",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            // borderColor: "white",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            display: "block", // Important for text truncation to apply correctly
+                            width: "100%", // Prevents resizing based on value length
                           },
                           "& .MuiSelect-icon": {
-                            color: "White",
+                            color: "white",
                           },
-                          width: "350px",
                         }}
                         name="product"
                         value={values.product}
@@ -633,14 +673,14 @@ const HomeHeader = () => {
                         <MenuItem value="" disabled hidden>
                           Select a product
                         </MenuItem>
-                        {products &&
-                          products.map((product) => (
-                            <MenuItem key={product._id} value={product._id}>
-                              {product?.itemName}
-                            </MenuItem>
-                          ))}
+                        {products?.map((product) => (
+                          <MenuItem key={product._id} value={product._id}>
+                            {product?.itemName}
+                          </MenuItem>
+                        ))}
                       </Select>
 
+                      {/* Quantity Selector */}
                       <Box
                         sx={{
                           display: "flex",
@@ -650,8 +690,9 @@ const HomeHeader = () => {
                           border: "1px solid #ccc",
                           borderRadius: "5px",
                           overflow: "hidden",
-                          width: "150px",
-                          padding: "5px 0px 5px 0px",
+                          width: { xs: "100%", sm: "150px" },
+                          padding: "5px 0px",
+                          justifyContent: "center",
                         }}
                       >
                         <IconButton
@@ -670,7 +711,6 @@ const HomeHeader = () => {
                           value={quantity}
                           onChange={handleInputChange}
                           onBlur={handleBlur}
-                          sx={{ color: "white" }}
                           inputProps={{
                             style: {
                               textAlign: "center",
@@ -684,6 +724,7 @@ const HomeHeader = () => {
                             disableUnderline: true,
                           }}
                         />
+
                         <IconButton
                           onClick={handleIncrease}
                           size="small"
@@ -696,13 +737,16 @@ const HomeHeader = () => {
                           <AddIcon />
                         </IconButton>
                       </Box>
+
                       {/* Submit Button */}
                       <Button
                         type="submit"
                         sx={{
-                          width: "20%",
+                          width: { xs: "100%", sm: "auto" },
                           backgroundColor: "#ffffff",
                           fontWeight: "600",
+                          px: 3,
+                          py: 1,
                         }}
                       >
                         Add Item

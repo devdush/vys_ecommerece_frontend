@@ -115,7 +115,7 @@ function App() {
           <Route path="home/:id" element={<ShopHome />} />
         </Route>
         <Route path="/shop" element={<ProductLayout />}>
-          <Route path="products/:id" element={<Products user={user} />} />
+          <Route path="products" element={<Products user={user} />} />
         </Route>
         <Route
           path="/shop"

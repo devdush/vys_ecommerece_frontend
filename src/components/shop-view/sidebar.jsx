@@ -36,6 +36,7 @@ import { ErrorMessage, Formik, Form } from "formik";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductsByFilter } from "../../store/action/getProductsByFilter";
+import MenuIcon from "@mui/icons-material/Menu";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -60,7 +61,8 @@ const ShopSidebarComponent = ({ userType, to }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const brands = useSelector((state) => state.brand.brands);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
@@ -165,68 +167,107 @@ const ShopSidebarComponent = ({ userType, to }) => {
         },
       }}
     >
-      <Sidebar collapsed={isCollapsed} style={{ width: "350px" }}>
-        <Menu
-          iconShape="square"
-          menuItemStyles={{
-            button: {
-              backgroundColor: "#2f3e48",
-              textAlign: "left",
-              margin: "10px",
+      {/* Hamburger icon for mobile */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          justifyContent: "flex-start",
+          padding: 1,
+        }}
+      >
+        <IconButton onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <MenuIcon sx={{ color: "#fff" }} />
+        </IconButton>
+      </Box>
 
-              "&:hover": {
-                backgroundColor: "#2f3e48 !important",
-                color: "white !important",
-                borderRadius: "8px !important",
-                fontWeight: "bold !important",
-              },
-            },
-            label: {
-              color: "#d4d5d5",
-              "&:hover": {
-                backgroundColor: "#2f3e48 !important",
-                color: "white !important",
-                borderRadius: "8px !important",
-                fontWeight: "bold !important",
-              },
-            },
+      {/* Overlay background for mobile sidebar */}
+      {mobileMenuOpen && isMobile && (
+        <Box
+          onClick={() => setMobileMenuOpen(false)}
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 998,
+          }}
+        />
+      )}
+
+      {/* Sidebar */}
+      {(isMobile ? mobileMenuOpen : true) && (
+        <Sidebar
+          collapsed={isMobile ? false : isCollapsed}
+          style={{
+            width: isMobile ? "250px" : "350px",
+            position: isMobile ? "fixed" : "relative",
+            zIndex: 999,
           }}
         >
-          <Box paddingLeft={isCollapsed ? undefined : "0%"}>
-            {menuItems.map((item, index) =>
-              item.subItems ? (
-                <SubMenu key={index} label={item.title} icon={item.icon}>
-                  {item.subItems.map((subItem, subIndex) => (
-                    <Item
-                      key={subIndex}
-                      title={subItem.title}
-                      to={subItem.to}
-                      icon={subItem.icon}
-                      selected={selected}
-                      setSelected={setSelected}
-                    />
-                  ))}
-                </SubMenu>
-              ) : (
-                <Item
-                  key={index}
-                  title={item.title}
-                  to={item.to}
-                  icon={item.icon}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-              )
-            )}
-          </Box>
-        </Menu>
-      </Sidebar>
+          <Menu
+            iconShape="square"
+            menuItemStyles={{
+              button: {
+                backgroundColor: "#2f3e48",
+                textAlign: "left",
+                margin: "10px",
+                "&:hover": {
+                  backgroundColor: "#2f3e48 !important",
+                  color: "white !important",
+                  borderRadius: "8px !important",
+                  fontWeight: "bold !important",
+                },
+              },
+              label: {
+                color: "#d4d5d5",
+                "&:hover": {
+                  backgroundColor: "#2f3e48 !important",
+                  color: "white !important",
+                  borderRadius: "8px !important",
+                  fontWeight: "bold !important",
+                },
+              },
+            }}
+          >
+            <Box paddingLeft={isCollapsed ? undefined : "0%"}>
+              {menuItems.map((item, index) =>
+                item.subItems ? (
+                  <SubMenu key={index} label={item.title} icon={item.icon}>
+                    {item.subItems.map((subItem, subIndex) => (
+                      <Item
+                        key={subIndex}
+                        title={subItem.title}
+                        to={subItem.to}
+                        icon={subItem.icon}
+                        selected={selected}
+                        setSelected={setSelected}
+                      />
+                    ))}
+                  </SubMenu>
+                ) : (
+                  <Item
+                    key={index}
+                    title={item.title}
+                    to={item.to}
+                    icon={item.icon}
+                    selected={selected}
+                    setSelected={setSelected}
+                  />
+                )
+              )}
+            </Box>
+          </Menu>
+        </Sidebar>
+      )}
       <Box
         sx={{
           color: "white",
           display: "flex",
           flexDirection: "column",
           padding: "10px",
+          display: { xs: "none", sm: "block" },
         }}
       >
         <Box
@@ -418,7 +459,7 @@ const ShopSidebarComponent = ({ userType, to }) => {
                     variant="contained"
                     color="primary"
                     fullWidth
-                    sx={{ mt: 2, py: 1.5,bgcolor:"#e29402" }}
+                    sx={{ mt: 2, py: 1.5, bgcolor: "#e29402" }}
                   >
                     Clear Filter
                   </Button>

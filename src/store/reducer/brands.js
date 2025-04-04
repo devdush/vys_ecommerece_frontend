@@ -11,4 +11,4 @@ const brandsReducer = (state = initialState,action)=>{
     }
     return state;
 }
-export default brandsReducer;
+export default brandsReducer; 

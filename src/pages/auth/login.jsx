@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { LoginUser } from "../../store/action/auth";
 import Footer from "../../components/home-view/footer";
 
+import { useTheme } from "@mui/material/styles"; // Import useTheme hook
 const AuthLogin = () => {
   const dispatch = useDispatch();
+  const theme = useTheme(); // Use the theme hook to get access to the theme object
 
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={async (values, { setSubmitting }) => {
@@ -37,6 +39,9 @@ const AuthLogin = () => {
                 padding: "20px",
                 margin: "20px",
                 border: "1px solid white",
+                [theme.breakpoints.down("sm")]: {
+                  width: "60%", // Center the items on mobile
+                },
               }}
             >
               <Typography

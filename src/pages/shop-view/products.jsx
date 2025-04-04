@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   FormHelperText,
   FormLabel,
   IconButton,
@@ -25,19 +26,25 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DOMPurify from "dompurify";
 import { addToCartService } from "../../services/add-to-cart/addtoCartServices";
-
+import { GetCartData } from "../../store/action/cart";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const validationSchema = Yup.object({});
 
 const Products = ({ user }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [ProductData, setProductData] = useState([]);
   const [imageArray, setImageArray] = useState([]);
   const [selectedImage, setSelectedImage] = useState(imageArray[0]);
   const [quantity, setQuantity] = useState(1);
   const [defaulImg, setDefaultImg] = useState("");
-
+  const dispatch = useDispatch();
+  const location = useLocation();
   const sliderRef = useRef(null);
-
+  const [loading, setLoading] = useState(false); // Loading state for product fetch
+  const [addingToCart, setAddingToCart] = useState(false); // Loading state for adding to cart
   const brandSettings = {
     dots: false,
     infinite: false,
@@ -74,27 +81,47 @@ const Products = ({ user }) => {
       },
     ],
   };
-
   useEffect(() => {
     const getData = async () => {
-      const pathname = window.location.pathname;
-      const id = pathname.split("/").pop();
+      setLoading(true); // Set loading to true when fetching product data
+      const queryParams = new URLSearchParams(location.search);
+      const id = queryParams.get("id");
+      if (!id) {
+        toast.error("Product ID not found in URL");
+        setLoading(false); // Set loading to false after error
+        return;
+      }
+
       try {
         const response = await getProductsById(id);
-        console.log("res",response)
-        setProductData(response.data.data);
-        const imgArray = [
-          response.data.data.defaultImage,
-          ...response.data.data.otherImages,
-        ];
-        setDefaultImg(response.data.data.defaultImage);
-        setImageArray(imgArray);
+        if (response?.data?.data) {
+          setProductData(response.data.data);
+          const imgArray = [
+            response.data.data.defaultImage,
+            ...(response.data.data.otherImages || []),
+          ];
+          setImageArray(imgArray);
+        } else {
+          toast.error("Product not found or returned null");
+        }
       } catch (error) {
         toast.error("Something went wrong while fetching initial data");
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched or error occurs
       }
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      // If the user is logged in, fetch cart data
+      dispatch(GetCartData(user.id));
+    } else {
+      // If the user is not logged in, display cart value as 0.00
+      dispatch(GetCartData(null)); // Optionally pass null or an empty cart object
+    }
+  }, [dispatch, user?.id, ProductData]);
 
   const handleIncrease = () => {
     console.log(user);
@@ -125,395 +152,414 @@ const Products = ({ user }) => {
       setQuantity(1);
     }
   };
+  const handleAddToCart = async () => {
+    if (!user?.id) {
+      toast.error("User not logged in!");
+      navigate("/auth/login");
+      return;
+    }
+
+    setAddingToCart(true); // Set loading to true when adding to cart
+
+    const obj = {
+      productId: ProductData._id,
+      quantity,
+      userId: user.id,
+    };
+
+    try {
+      const response = await addToCartService(obj);
+      if (response?.status === 200) {
+        toast.success("Product added to the cart");
+        dispatch(GetCartData(user.id)); // Refresh cart data
+      } else {
+        toast.error("Failed to add product to cart");
+      }
+    } catch (error) {
+      toast.error("Something went wrong while adding to cart");
+    } finally {
+      setAddingToCart(false); // Set loading to false after adding to cart
+    }
+  };
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          padding: "10px",
-        }}
-      >
-        <Box sx={{ flex: 1 }}>
-          <Box
-            sx={{
-              width: "100%",
-              height: "400px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden",
-
-              marginBottom: "20px",
-            }}
-          >
-            <img
-              src={selectedImage != null ? selectedImage : defaulImg}
-              alt="Selected Product"
-              style={{
-                maxHeight: "100%",
-                maxWidth: "100%",
-                objectFit: "contain",
-              }}
-            />
-          </Box>
-
-          {/* Thumbnail Slider */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-
-              alignItems: "center",
-            }}
-          >
-            {imageArray?.length > 1 ? (
-              <Box name="sliderContainer" sx={{ maxWidth: "400px" }}>
-                <Slider {...brandSettings}>
-                  {imageArray.map((image, index) => (
-                    <Box key={index} onClick={() => setSelectedImage(image)}>
-                      <img
-                        src={image}
-                        alt={image.alt}
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          border:
-                            image === selectedImage ? "1px solid white" : "",
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Slider>
-              </Box>
-            ) : (
-              <Box></Box>
-            )}
-          </Box>
+      {loading ? (
+        // Show loader when product data is being fetched
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            padding: { xs: "30px", md: "50px" },
+          }}
+        >
+          <CircularProgress size={60} />
         </Box>
-        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <Box
-            sx={{
-              color: "white",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "left",
-              alignItems: "start",
-              borderBottom: "1px solid white",
-              padding: "10px 0px",
-            }}
-          >
-            <Typography variant="h7" sx={{ fontWeight: "300", padding: "5px" }}>
-              {ProductData?.category?.categoryTitle}
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "500", padding: "5px", textAlign: "left" }}
-            >
-              {ProductData?.itemName}
-            </Typography>
-            <Typography variant="h7" sx={{ fontWeight: "400", padding: "5px" }}>
-              Availability:{" "}
-              <span style={{ color: "#01e427" }}>
-                {ProductData?.onHand} Available in Stock
-              </span>
-            </Typography>
-          </Box>
+      ) : (
+        <>
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "left",
-              alignItems: "start",
-              borderBottom: "1px solid white",
-              textAlign: "left",
-              padding: "10px 0px",
+              flexDirection: { xs: "column", md: "row" },
+              padding: { xs: "10px", md: "10px" },
+              gap: { xs: "20px", md: "0" },
             }}
           >
-            <IconButton sx={{ color: "white", fontSize: "14px" }}>
-              <LocalPrintshopOutlinedIcon sx={{ color: "white" }} />
-              Add to Quotation
-            </IconButton>
-            <Typography
-              sx={{ lineHeight: "5px", fontWeight: "300" }}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(ProductData?.shortDescription),
-              }}
-            />
-
-            <Typography variant="h7" sx={{ fontWeight: "400", color: "white" }}>
-              SKU : {ProductData?.SKU}
-            </Typography>
-            {ProductData?.warranty?.duration != "No Warranty" ? (
-              <img
-                src={ProductData?.warranty?.imageUrl}
-                alt="ads"
-                style={{ width: 200, padding: "10px" }}
-              />
-            ) : (
-              <Typography></Typography>
-            )}
-
+            {/* Left Section */}
+            <Box sx={{ flex: 1 }}>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: { xs: "250px", md: "400px" },
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  marginBottom: "20px",
+                }}
+              >
+                <img
+                  src={selectedImage != null ? selectedImage : defaulImg}
+                  alt="Selected Product"
+                  style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+              {/* Thumbnail Slider */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {imageArray?.length > 1 ? (
+                  <Box
+                    name="sliderContainer"
+                    sx={{ maxWidth: { xs: "300px", md: "400px" } }}
+                  >
+                    <Slider {...brandSettings}>
+                      {imageArray.map((image, index) => (
+                        <Box
+                          key={index}
+                          onClick={() => setSelectedImage(image)}
+                        >
+                          <img
+                            src={image}
+                            alt={image.alt}
+                            style={{
+                              width: "100px",
+                              height: "100px",
+                              border:
+                                image === selectedImage
+                                  ? "1px solid white"
+                                  : "",
+                            }}
+                          />
+                        </Box>
+                      ))}
+                    </Slider>
+                  </Box>
+                ) : (
+                  <Box></Box>
+                )}
+              </Box>
+            </Box>
+            {/* Right Section */}
             <Box
               sx={{
+                flex: 1,
                 display: "flex",
-
                 flexDirection: "column",
               }}
             >
-              {/* Sales Price */}
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: "400", color: "white" }}
+              <Box
+                sx={{
+                  color: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  borderBottom: "1px solid white",
+                  padding: "10px 0",
+                }}
               >
-                LKR{" "}
-                {ProductData?.sales_price
-                  ? new Intl.NumberFormat("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }).format(ProductData.sales_price)
-                  : "0.00"}
-              </Typography>
-
-              {/* Old Price with Red Line */}
-              {ProductData?.oldPrice !== 0 || ProductData?.oldPrice !== "" ? (
-                <Box
-                  sx={{
-                    position: "relative",
-
-                    display: "inline-block",
-                  }}
+                <Typography
+                  variant="h7"
+                  sx={{ fontWeight: "300", padding: "5px" }}
                 >
+                  {ProductData?.category?.categoryTitle}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{ fontWeight: "500", padding: "5px", textAlign: "left" }}
+                >
+                  {ProductData?.itemName}
+                </Typography>
+                <Typography
+                  variant="h7"
+                  sx={{ fontWeight: "400", padding: "5px" }}
+                >
+                  Availability:{" "}
+                  <span style={{ color: "#01e427" }}>
+                    {ProductData?.onHand} Available in Stock
+                  </span>
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  borderBottom: "1px solid white",
+                  textAlign: "left",
+                  padding: "10px 0",
+                }}
+              >
+                <IconButton sx={{ color: "white", fontSize: "14px" }}>
+                  <LocalPrintshopOutlinedIcon sx={{ color: "white" }} />
+                  Add to Quotation
+                </IconButton>
+                <Typography
+                  sx={{ lineHeight: "5px", fontWeight: "300" }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(ProductData?.shortDescription),
+                  }}
+                />
+                <Typography
+                  variant="h7"
+                  sx={{ fontWeight: "400", color: "white" }}
+                >
+                  SKU : {ProductData?.SKU}
+                </Typography>
+                {ProductData?.warranty?.duration !== "No Warranty" ? (
+                  <img
+                    src={ProductData?.warranty?.imageUrl}
+                    alt="Warranty"
+                    style={{ width: 200, padding: "10px" }}
+                  />
+                ) : (
+                  <Typography></Typography>
+                )}
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {/* Sales Price */}
                   <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: "300",
-                      color: "white",
-                    }}
+                    variant="h4"
+                    sx={{ fontWeight: "400", color: "white" }}
                   >
-                    {ProductData?.oldPrice
+                    LKR{" "}
+                    {ProductData?.sales_price
                       ? new Intl.NumberFormat("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
-                        }).format(ProductData.oldPrice)
+                        }).format(ProductData.sales_price)
                       : "0.00"}
                   </Typography>
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      height: "2px",
-                      backgroundColor: "red",
-                      width: "45%",
-                      top: "55%",
-                      left: 0,
-                      transform: "translateY(-50%)",
-                    }}
-                  />
-                </Box>
-              ) : (
-                <Box></Box>
-              )}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              color: "white",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "left",
-              alignItems: "start",
-              borderBottom: "1px solid white",
-              padding: "10px 0px",
-            }}
-          >
-            <Formik
-              initialValues={{ color: "", qty: "" }}
-              validationSchema={validationSchema}
-              onSubmit={async (values, { setSubmitting }) => {
-                setSubmitting(true);
-                console.log(quantity);
-
-                try {
-                  if (user && user.id) {
-                    const userID = user.id;
-                    const obj = {
-                      productId: ProductData._id,
-                      quantity: quantity,
-                      userId: userID,
-                    };
-                    const response = await addToCartService(obj);
-                    console.log(response);
-                  } else {
-                    console.error("User ID is missing");
-                    window.location.href = "/auth/login"; // Navigate to login page
-                  }
-                } catch (error) {
-                  console.log(error);
-                  toast.error(
-                    "Something Went Wrong While Adding New Main Category!"
-                  );
-                }
-              }}
-            >
-              {({
-                values,
-                errors,
-                touched,
-                handleSubmit,
-                isValid,
-                handleBlur,
-                handleChange,
-                resetForm,
-              }) => (
-                <Form
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                  }}
-                >
-                  {/* Left Column - Form Section */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "start",
-                      gap: "10px",
-                    }}
-                  >
-                    {/* <FormLabel sx={{ display: "flex", color: "white" }}>
-                      Color
-                    </FormLabel>
-                    <Select
-                      sx={{
-                        textAlign: "left", // Align the text to the left
-                        ".MuiSelect-select": {
-                          textAlign: "left", // For alignment inside the select
-                        },
-                        border: "1px solid white",
-                        color: "white",
-                        width: "200px",
-                      }}
-                      name="color"
-                      value={values.color}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      variant="outlined"
-                      displayEmpty
-                      size="small"
-                      error={!!touched.color && !!errors.color}
-                    >
-                      <MenuItem value="" disabled hidden>
-                        Select a color
-                      </MenuItem>
-                      {ProductData?.colors &&
-                        ProductData?.colors.map((color) => (
-                          <MenuItem key={color} value={color}>
-                            {color}
-                          </MenuItem>
-                        ))}
-                    </Select>
-
-                    {touched.color && errors.color && (
-                      <FormHelperText error>{errors.color}</FormHelperText>
-                    )} */}
-                    <FormLabel sx={{ display: "flex", color: "white" }}>
-                      Quantity
-                    </FormLabel>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        color: "white",
-                        border: "1px solid #ccc",
-                        borderRadius: "5px",
-                        overflow: "hidden",
-                        width: "120px",
-                        padding: "5px 0px 5px 0px",
-                      }}
-                    >
-                      <IconButton
-                        onClick={handleDecrease}
-                        size="small"
-                        sx={{
-                          borderLeft: "1px solid #ffffff",
-                          borderRight: "1px solid #ffffff",
-                          color: "white",
-                        }}
+                  {/* Old Price with Red Line */}
+                  {ProductData?.oldPrice !== 0 ||
+                  ProductData?.oldPrice !== "" ? (
+                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "300", color: "white" }}
                       >
-                        <RemoveIcon />
-                      </IconButton>
-
-                      <TextField
-                        value={quantity}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        sx={{ color: "white" }}
-                        inputProps={{
-                          style: {
-                            textAlign: "center",
-                            width: "40px",
-                            padding: "5px 0",
-                            color: "white",
-                          },
-                        }}
-                        variant="standard"
-                        InputProps={{
-                          disableUnderline: true,
+                        {ProductData?.oldPrice
+                          ? new Intl.NumberFormat("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }).format(ProductData.oldPrice)
+                          : "0.00"}
+                      </Typography>
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          height: "2px",
+                          backgroundColor: "red",
+                          width: "45%",
+                          top: "55%",
+                          left: 0,
+                          transform: "translateY(-50%)",
                         }}
                       />
-                      <IconButton
-                        onClick={handleIncrease}
-                        size="small"
+                    </Box>
+                  ) : (
+                    <Box></Box>
+                  )}
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  color: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  borderBottom: "1px solid white",
+                  padding: "10px 0",
+                }}
+              >
+                <Formik
+                  initialValues={{ color: "", qty: "" }}
+                  validationSchema={validationSchema}
+                  onSubmit={async (values, { setSubmitting }) => {
+                    setSubmitting(true);
+                    console.log(quantity);
+                    try {
+                      if (user && user.id) {
+                        const userID = user.id;
+                        const obj = {
+                          productId: ProductData._id,
+                          quantity: quantity,
+                          userId: userID,
+                        };
+                        const response = await addToCartService(obj);
+                        if (response?.status === 200) {
+                          // Reduce OnHand by quantity
+                          setProductData((prev) => ({
+                            ...prev,
+                            onHand: prev.onHand - quantity,
+                          }));
+                          toast.success("Product added to the cart");
+                        } else {
+                          toast.error("Failed to add product to cart");
+                        }
+                      } else {
+                        console.error("User ID is missing");
+                        window.location.href = "/auth/login";
+                      }
+                    } catch (error) {
+                      console.log(error);
+                      toast.error("Something Went Wrong While Product to Cart");
+                    }
+                  }}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleSubmit,
+                    isValid,
+                    handleBlur,
+                    handleChange,
+                    resetForm,
+                  }) => (
+                    <Form
+                      style={{ display: "flex", justifyContent: "flex-start" }}
+                    >
+                      {/* Left Column - Form Section */}
+                      <Box
                         sx={{
-                          borderLeft: "1px solid #ffffff",
-                          borderRight: "1px solid #ffffff",
-                          color: "white",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                          gap: "10px",
                         }}
                       >
-                        <AddIcon />
-                      </IconButton>
-                    </Box>
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      sx={{
-                        alignSelf: "left",
-                        mt: 2,
-                        backgroundColor: "#2596be",
-                      }}
-                    >
-                      Add to cart
-                    </Button>
-                  </Box>
-                </Form>
-              )}
-            </Formik>
+                        <FormLabel sx={{ display: "flex", color: "white" }}>
+                          Quantity
+                        </FormLabel>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            color: "white",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            overflow: "hidden",
+                            width: { xs: "100px", md: "120px" },
+                            padding: "5px 0",
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleDecrease}
+                            size="small"
+                            sx={{
+                              borderLeft: "1px solid #ffffff",
+                              borderRight: "1px solid #ffffff",
+                              color: "white",
+                            }}
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                          <TextField
+                            value={quantity}
+                            onChange={handleInputChange}
+                            onBlur={handleBlur}
+                            sx={{ color: "white" }}
+                            inputProps={{
+                              style: {
+                                textAlign: "center",
+                                width: "40px",
+                                padding: "5px 0",
+                                color: "white",
+                              },
+                            }}
+                            variant="standard"
+                            InputProps={{ disableUnderline: true }}
+                          />
+                          <IconButton
+                            onClick={handleIncrease}
+                            size="small"
+                            sx={{
+                              borderLeft: "1px solid #ffffff",
+                              borderRight: "1px solid #ffffff",
+                              color: "white",
+                            }}
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </Box>
+                        <Box sx={{ display: "flex", gap: "10px" }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleAddToCart}
+                            disabled={addingToCart}
+                          >
+                            {addingToCart ? (
+                              <CircularProgress
+                                size={24}
+                                sx={{ color: "white" }}
+                              />
+                            ) : (
+                              "Add to Cart"
+                            )}
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Form>
+                  )}
+                </Formik>
+              </Box>
+            </Box>
           </Box>
-        </Box>
-      </Box>
-      <Box sx={{ padding: "10px" }}>
-        <Typography variant="h5" sx={{ color: "white" }}>
-          Specifications
-        </Typography>
-        <Box
-          sx={{
-            border: "1px solid white",
-            padding: "30px",
-
-            borderRadius: "10px",
-            textAlign: "left",
-          }}
-        >
-          <Typography
-            sx={{ lineHeight: "3px", fontWeight: "300" }}
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(ProductData?.Specification),
-            }}
-          />
-        </Box>
-      </Box>
+          <Box sx={{ padding: { xs: "10px", md: "10px" } }}>
+            <Typography variant="h5" sx={{ color: "white" }}>
+              Specifications
+            </Typography>
+            <Box
+              sx={{
+                border: "1px solid white",
+                padding: { xs: "20px", md: "30px" },
+                borderRadius: "10px",
+                textAlign: "left",
+              }}
+            >
+              <Typography
+                sx={{ lineHeight: "3px", fontWeight: "300" }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(ProductData?.Specification),
+                }}
+              />
+            </Box>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
