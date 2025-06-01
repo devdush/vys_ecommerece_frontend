@@ -35,6 +35,7 @@ import { getCategories } from "../../services/category/getcategory";
 import { getBrands } from "../../services/brand/getBrands";
 import { addProduct } from "../../services/product/saveProduct";
 import * as Yup from "yup";
+import { deleteProduct } from "../../services/product/deleteProduct";
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -281,7 +282,7 @@ const UpdateProducts = () => {
               justifyContent: "space-around",
             }}
           >
-            <Button
+            {/* <Button
               onClick={() => handleUpdate(params.row, "view")}
               variant="contained"
               style={{
@@ -290,8 +291,8 @@ const UpdateProducts = () => {
               }}
             >
               View
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               onClick={() => handleUpdate(params.row, "edit")}
               variant="contained"
               style={{
@@ -300,7 +301,7 @@ const UpdateProducts = () => {
               }}
             >
               Edit
-            </Button>
+            </Button> */}
             <Button
               onClick={() => handleDelete(params.row)}
               variant="contained"
@@ -320,13 +321,28 @@ const UpdateProducts = () => {
 
   const handleUpdate = async (id, modalType) => {
     setSelectedData(id);
-    console.log(selectedData.category.categoryTitle);
+    console.log(selectedData);
 
     setModalType(modalType);
     handleOpen();
   };
   const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) {
+      return; // Exit if the user cancels the deletion
+    }
+
     try {
+      const response = await deleteProduct(id._id);
+      if (response.data.success) {
+        toast.success("Product deleted successfully!");
+        // Remove the deleted product from the state
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== id._id)
+        );
+        setFilteredData((prevFilteredData) =>
+          prevFilteredData.filter((product) => product._id !== id._id)
+        );
+      }
     } catch (error) {
       toast.error("Something went wrong while deletion!");
     }
@@ -450,7 +466,7 @@ const UpdateProducts = () => {
                 itemCode: selectedData.itemName || "",
                 productTitle: selectedData.perDescription || "",
                 category: selectedData?.category?._id || "",
-                brand: "",
+                brand: selectedData?.brand?._id || "",
                 colors: [],
                 shortDescription: "",
                 sellPrice: selectedData.sales_price_with_vat || "",

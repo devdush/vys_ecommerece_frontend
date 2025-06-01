@@ -31,7 +31,7 @@ const validationSchema = Yup.object({
 const AuthRegister = () => {
   const navigate = useNavigate();
   return (
-    <Box>
+    <Box width={"100%"}>
       <Formik
         initialValues={{
           firstName: "",
@@ -55,8 +55,9 @@ const AuthRegister = () => {
           try {
             const response = await registerUser(obj);
             if (response?.data?.success) {
-              toast.success("Success");
-
+              toast.success(
+                "Registration successful! Please login after verifying your email. Check your inbox and spam for a verification email."
+              );
               navigate("/auth/login");
             } else {
               toast.error(response.data.message);
@@ -65,7 +66,6 @@ const AuthRegister = () => {
             toast.error(error);
             console.log(error);
           }
-
           setSubmitting(false);
         }}
       >
@@ -81,7 +81,8 @@ const AuthRegister = () => {
               <Box
                 sx={{
                   display: "flex",
-                  jnustifyContent: "space-between",
+                  flexDirection: { xs: "column", md: "row" },
+                  justifyContent: "space-between",
                   margin: "40px",
                 }}
               >
@@ -106,24 +107,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -146,24 +147,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -186,24 +187,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -226,24 +227,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -276,24 +277,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -316,24 +317,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}
@@ -356,24 +357,24 @@ const AuthRegister = () => {
                       mb: 3,
                       border: "1px solid white",
                       "& .MuiInputBase-input": {
-                        color: "white", // Text color inside the input field
+                        color: "white",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "white",
-                        opacity: 1, // Ensures the placeholder is fully visible
+                        opacity: 1,
                       },
                       "& .MuiInputLabel-root": {
-                        color: "white", // Label color
+                        color: "white",
                       },
                       "& .MuiOutlinedInput-root": {
                         "& fieldset": {
-                          borderColor: "white", // Border color
+                          borderColor: "white",
                         },
                         "&:hover fieldset": {
-                          borderColor: "white", // Border color on hover
+                          borderColor: "white",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "white", // Border color when focused
+                          borderColor: "white",
                         },
                       },
                     }}

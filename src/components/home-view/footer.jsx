@@ -1,53 +1,34 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import MusicNoteOutlinedIcon from "@mui/icons-material/MusicNoteOutlined";
-import AlternateEmailOutlinedIcon from "@mui/icons-material/AlternateEmailOutlined";
 import { Link } from "react-router-dom";
 import logo from "./vys.png";
-import { useTheme } from "@mui/material/styles"; // Import useTheme hook
+import { getCategories } from "../../services/category/getcategory";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp"; // Import at top
 
 const Footer = () => {
-  const theme = useTheme(); // Use the theme hook to get access to the theme object
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // ✅ Detect mobile screen
 
-  const productLinks = [
-    "Headset",
-    "Gaming Laptops",
-    "Wifi Cameras",
-    "Turbo HD Cameras",
-    "Web Cameras",
-    "Personal Laptops",
-    "Business Laptops",
-    "Headset",
-    "Gaming Laptops",
-    "Wifi Cameras",
-    "Turbo HD Cameras",
-    "Web Cameras",
-    "Personal Laptops",
-    "Business Laptops",
-    "Headset",
-    "Gaming Laptops",
-    "Wifi Cameras",
-    "Turbo HD Cameras",
-    "Web Cameras",
-    "Personal Laptops",
-    "Business Laptops",
-    "Headset",
-    "Gaming Laptops",
-    "Wifi Cameras",
-    "Turbo HD Cameras",
-    "Web Cameras",
-    "Personal Laptops",
-    "Business Laptops",
-  ];
+  const [categories, setCategories] = useState([]);
 
-  // Split product links into 4 columns
-  const chunkSize = Math.ceil(productLinks.length / 4);
-  const productChunks = Array.from({ length: 4 }, (_, i) =>
-    productLinks.slice(i * chunkSize, i * chunkSize + chunkSize)
-  );
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const res = await getCategories();
+      setCategories(res.data?.data || []);
+    };
+    fetchCategories();
+  }, []);
+
+  // ✅ Handle chunking of categories
+  const chunkSize = Math.ceil(categories.length / 4);
+  const productChunks = isMobile
+    ? [categories] // Single column on mobile
+    : Array.from({ length: 4 }, (_, i) =>
+        categories.slice(i * chunkSize, i * chunkSize + chunkSize)
+      );
 
   const renderProductColumn = (links, index) => (
     <Box
@@ -55,9 +36,9 @@ const Footer = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-start",
-        minWidth: "120px",
-        flex: 1,
+        alignItems: isMobile ? "center" : "flex-start",
+        minWidth: isMobile ? "100%" : "120px",
+        flex: isMobile ? "unset" : 1,
         mb: { xs: 2, sm: 0 },
       }}
     >
@@ -71,7 +52,7 @@ const Footer = () => {
             padding: "5px 0",
           }}
         >
-          {product}
+          {product.categoryTitle}
         </Link>
       ))}
     </Box>
@@ -96,7 +77,7 @@ const Footer = () => {
           borderBottom: "1px solid white",
           textAlign: "left",
           [theme.breakpoints.down("sm")]: {
-            textAlign: "center", // Center the items on mobile
+            textAlign: "center",
           },
           pb: 4,
         }}
@@ -110,7 +91,7 @@ const Footer = () => {
                 justifyContent: "flex-start",
                 mb: 2,
                 [theme.breakpoints.down("sm")]: {
-                  justifyContent: "center", // Center the items on mobile
+                  justifyContent: "center",
                 },
               }}
             >
@@ -122,7 +103,6 @@ const Footer = () => {
             </Box>
           </a>
 
-          {/* Hotline */}
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <HeadsetMicOutlinedIcon sx={{ fontSize: 40 }} />
             <Box sx={{ pl: 2 }}>
@@ -135,7 +115,6 @@ const Footer = () => {
             </Box>
           </Box>
 
-          {/* Showroom */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle1" fontWeight={500}>
               Showroom & Technical Office
@@ -146,7 +125,6 @@ const Footer = () => {
             </Typography>
           </Box>
 
-          {/* Branch */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle1" fontWeight={500}>
               Branch
@@ -157,14 +135,13 @@ const Footer = () => {
             </Typography>
           </Box>
 
-          {/* Social Media */}
           <Box
             sx={{
               display: "flex",
               gap: 2,
               mt: 2,
               [theme.breakpoints.down("sm")]: {
-                justifyContent: "center", // Center the items on mobile
+                justifyContent: "center",
               },
             }}
           >
@@ -180,6 +157,14 @@ const Footer = () => {
             >
               <InstagramIcon sx={{ fontSize: 30, color: "white" }} />
             </Link>
+            <a
+              href="https://wa.me/+94775326888" // replace with your WhatsApp number
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <WhatsAppIcon sx={{ fontSize: 30, color: "white" }} />
+            </a>
           </Box>
         </Box>
 
@@ -187,10 +172,11 @@ const Footer = () => {
         <Box
           sx={{
             display: "flex",
-            flexWrap: "wrap",
-            flex: 2,
-            justifyContent: { xs: "flex-start", md: "space-between" },
-            gap: 2,
+            flexDirection: isMobile ? "column" : "row",
+            flexWrap: isMobile ? "nowrap" : "wrap",
+            flex: isMobile ? 1 : 2,
+            justifyContent: isMobile ? "center" : "space-between",
+            gap: isMobile ? 1 : 2,
           }}
         >
           {productChunks.map((chunk, index) =>
@@ -204,7 +190,7 @@ const Footer = () => {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           pt: 3,
           gap: 2,
@@ -214,11 +200,6 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} VYS International. All Rights
           Reserved.
         </Typography>
-
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <MusicNoteOutlinedIcon sx={{ fontSize: 24 }} />
-          <AlternateEmailOutlinedIcon sx={{ fontSize: 24 }} />
-        </Box>
       </Box>
     </Box>
   );

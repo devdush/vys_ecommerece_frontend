@@ -6,23 +6,29 @@ export const getProductsByFilter = (obj) => {
     const id = `${obj.id}?brand=${obj.brand}&priceMin=${obj.minPrice}&priceMax=${obj.maxPrice}`;
     try {
       const response = await getProductsByCategory(id);
+      const products = response?.data?.data || [];
       console.log("response in pro ac", response);
-      const products = response.data.data;
-      if (response?.data?.success) {
-        dispatch({
-          type: "PRODUCTS_BY_FILTER",
-          products: products,
-        });
-      } else {
-        dispatch({
-          type: "PRODUCTS_BY_FILTER",
-          products: null,
-        });
-      }
+
+      dispatch({
+        type: "PRODUCTS_BY_FILTER",
+        products: products,
+      });
     } catch (error) {
-      console.log("error");
-      console.log(error);
-      toast.error("Network error: Unable to reach the server.");
+      console.log("error", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error response:", error.response.data);
+        toast.error(
+          `Error: ${error.response.data.message || "Something went wrong!"}`
+        );
+      }
+
+      // Clear products on error as well (optional)
+      dispatch({
+        type: "PRODUCTS_BY_FILTER",
+        products: [],
+      });
     }
   };
 };

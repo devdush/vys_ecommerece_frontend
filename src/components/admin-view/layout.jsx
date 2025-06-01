@@ -15,7 +15,8 @@ import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import { Typography } from "@mui/material";
-import ShieldIcon from '@mui/icons-material/Shield';
+import ShieldIcon from "@mui/icons-material/Shield";
+
 const NAVIGATION = [
   {
     kind: "header",
@@ -65,11 +66,11 @@ const NAVIGATION = [
         title: "Create",
         icon: <AddIcon />,
       },
-      {
-        segment: "brand-update",
-        title: "Manage",
-        icon: <CreateIcon />,
-      },
+      // {
+      //   segment: "brand-update",
+      //   title: "Manage",
+      //   icon: <CreateIcon />,
+      // },
     ],
   },
   {
@@ -146,7 +147,7 @@ const NAVIGATION = [
     ],
   },
   {
-    segment: "admin/orders",
+    segment: "admin/logout",
     title: "Logout",
     icon: <LogoutIcon />,
   },

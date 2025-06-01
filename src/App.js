@@ -38,6 +38,7 @@ import { GetCartData } from "./store/action/cart";
 import CartPage from "./components/cart-view/cart";
 import CartLayout from "./components/cart-view/layout";
 import VerifyEmail from "./components/common/verify-email";
+import Logout from "./components/admin-view/logout";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -78,7 +79,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeView />} />
 
-        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route
           path="/auth"
           element={
@@ -110,6 +111,7 @@ function App() {
           <Route path="product-create" element={<CreateProducts />} />
           <Route path="product-update" element={<UpdateProducts />} />
           <Route path="erp-products" element={<FromERP />} />
+          <Route path="logout" element={<Logout />} />
         </Route>
         <Route path="/shop" element={<ShopLayout />}>
           <Route path="home/:id" element={<ShopHome />} />

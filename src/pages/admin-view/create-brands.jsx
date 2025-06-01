@@ -175,7 +175,7 @@ const CreateBrands = () => {
                   <TextField
                     margin="normal"
                     name="title"
-                    label="Main Category Title"
+                    label="Brand Title"
                     type="text"
                     id="title"
                     onChange={handleChange}

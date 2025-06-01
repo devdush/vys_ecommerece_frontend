@@ -100,75 +100,75 @@ const HomeView = () => {
 
   const images = [
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/1.jpg",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/1.jpg",
       alt: "Image 1",
       caption: "This is the first image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/2.jpg",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/2.jpg",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/3.jpg",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/3.jpg",
       alt: "Image 3",
       caption: "This is the second image",
     },
   ];
   const brandImages = [
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Acer.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Acer.png",
       alt: "Image 1",
       caption: "This is the first image",
     },
 
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Apple.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Apple.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Asus.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Asus.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Biostart.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Biostart.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/Dell.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Dell.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/hcl.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/hcl.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/hp.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/hp.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/intel.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/intel.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/lenevo.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/lenevo.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/nvidia.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/nvidia.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://imageholdervys.s3.us-east-1.amazonaws.com/samsung.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/samsung.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
@@ -223,7 +223,7 @@ const HomeView = () => {
   const handleButtonClick = (id) => {
     // Navigate to the product details page
     console.log(`Card clicked for product ID: ${id}`);
-    navigate(`/shop/products/${id}`); // Example navigation
+    navigate(`/shop/products/?id=${id}`); // Example navigation
   };
   return (
     <Box
@@ -332,14 +332,19 @@ const HomeView = () => {
                       : product.itemName}
                   </Typography>
                   <Typography
-                    variant="subtitle1"
+                    variant="h6"
                     sx={{
-                      fontWeight: "300",
+                      fontWeight: "500",
                       marginBottom: "10px",
+                      color: "#fff", // Optional: adjust color for contrast on dark background
                     }}
                   >
-                    LKR {product.sales_price}
+                    {`Rs. ${new Intl.NumberFormat("en-LK", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(product.sales_price)}`}
                   </Typography>
+
                   <Button
                     variant="contained"
                     color="primary"
@@ -431,14 +436,19 @@ const HomeView = () => {
                         : product.itemName}
                     </Typography>
                     <Typography
-                      variant="subtitle1"
+                      variant="h6"
                       sx={{
-                        fontWeight: "300",
+                        fontWeight: "500",
                         marginBottom: "10px",
+                        color: "#fff", // Optional: adjust color for contrast on dark background
                       }}
                     >
-                      LKR {product.sales_price}
+                      {`Rs. ${new Intl.NumberFormat("en-LK", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(product.sales_price)}`}
                     </Typography>
+
                     <Button
                       variant="contained"
                       color="primary"
@@ -500,14 +510,19 @@ const HomeView = () => {
                         : product.itemName}
                     </Typography>
                     <Typography
-                      variant="subtitle1"
+                      variant="h6"
                       sx={{
-                        fontWeight: "300",
+                        fontWeight: "500",
                         marginBottom: "10px",
+                        color: "#fff", // Optional: adjust color for contrast on dark background
                       }}
                     >
-                      LKR {product.sales_price}
+                      {`Rs. ${new Intl.NumberFormat("en-LK", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(product.sales_price)}`}
                     </Typography>
+
                     <Button
                       variant="contained"
                       color="primary"
@@ -569,14 +584,19 @@ const HomeView = () => {
                         : product.itemName}
                     </Typography>
                     <Typography
-                      variant="subtitle1"
+                      variant="h6"
                       sx={{
-                        fontWeight: "300",
+                        fontWeight: "500",
                         marginBottom: "10px",
+                        color: "#fff", // Optional: adjust color for contrast on dark background
                       }}
                     >
-                      LKR {product.sales_price}
+                      {`Rs. ${new Intl.NumberFormat("en-LK", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(product.sales_price)}`}
                     </Typography>
+
                     <Button
                       variant="contained"
                       color="primary"
