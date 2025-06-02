@@ -4,10 +4,10 @@ import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { Link } from "react-router-dom";
-import logo from "./vys.png";
+import logo from "./vyslogo.png";
 import { getCategories } from "../../services/category/getcategory";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp"; // Import at top
-
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 const Footer = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // ✅ Detect mobile screen
@@ -166,6 +166,16 @@ const Footer = () => {
               <WhatsAppIcon sx={{ fontSize: 30, color: "white" }} />
             </a>
           </Box>
+          <Link
+            to={"https://maps.app.goo.gl/CE92crfTG1E19ti38"}
+            target="blank"
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
+              <LocationOnOutlinedIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>Store Locator</Typography>
+            </Box>
+          </Link>
         </Box>
 
         {/* Product Links */}

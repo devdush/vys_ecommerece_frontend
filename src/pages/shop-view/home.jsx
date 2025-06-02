@@ -102,8 +102,8 @@ const ShopHome = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.842)", // Add box shadow
-              transition: "box-shadow 0.3s ease-in-out", // Smooth transition for shadow
+              // boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.842)", // Add box shadow
+              // transition: "box-shadow 0.3s ease-in-out", // Smooth transition for shadow
               overflow: "hidden",
               "&:hover": {
                 cursor: "pointer",

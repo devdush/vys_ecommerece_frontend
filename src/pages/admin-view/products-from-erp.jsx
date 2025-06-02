@@ -180,7 +180,7 @@ const FromERP = () => {
 
   const uploadFile = (file) => {
     const params = {
-      Bucket: "imageholdervys",
+      Bucket: "vysimages",
       Key: file.name,
       Body: file,
       ACL: "public-read", // Set to 'public-read' to allow access to the file URL
@@ -192,13 +192,14 @@ const FromERP = () => {
       } else {
         console.log("File uploaded successfully:", data);
         setImageUrl(data.Location); // Set the image URL for display
+        console.log(imageUrl)
       }
     });
   };
 
   const uploadMoreImages = (file) => {
     const params = {
-      Bucket: "imageholdervys",
+      Bucket: "vysimages",
       Key: file.name,
       Body: file,
       ACL: "public-read",
@@ -213,11 +214,18 @@ const FromERP = () => {
     });
   };
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selectedFile) {
-      uploadFile(selectedFile);
-    } else {
-      alert("Please select a valid file to upload.");
+    try {
+      e.preventDefault();
+      if (selectedFile) {
+        console.log("selectedFile",selectedFile);
+        
+        uploadFile(selectedFile);
+      } else {
+        alert("Please select a valid file to upload.");
+      }
+      
+    } catch (error) {
+      console.log("e",error)
     }
   };
   const handleMoreSubmit = (e) => {
@@ -238,7 +246,7 @@ const FromERP = () => {
           (element) =>
             !webDBItemCodes.includes(element.itemName) && element.on_hand != 0
         );
-        console.log("NEW ARRAY",newArray)
+        
         setData(newArray);
         setFilteredData(newArray); // Set initial filtered data
       } catch (error) {

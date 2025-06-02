@@ -122,7 +122,7 @@ export default function () {
 
       const img = new Image();
       img.onload = () => {
-        if (img.width !== 400 || img.height !== 400) {
+        if (img.width !== 600 || img.height !== 600) {
           setError(
             "Invalid image dimensions. Please upload an image of 300x300 pixels."
           );
@@ -166,7 +166,7 @@ export default function () {
 
   const uploadFile = (file) => {
     const params = {
-      Bucket: "imageholdervys",
+      Bucket: "vysimages",
       Key: file.name,
       Body: file,
       ACL: "public-read", // Set to 'public-read' to allow access to the file URL
@@ -184,7 +184,7 @@ export default function () {
 
   const uploadMoreImages = (file) => {
     const params = {
-      Bucket: "imageholdervys",
+      Bucket: "vysimages",
       Key: file.name,
       Body: file,
       ACL: "public-read",

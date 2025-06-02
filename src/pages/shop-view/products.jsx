@@ -9,6 +9,7 @@ import {
   Select,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React, { useEffect, useState, useRef } from "react";
 import { getProductsById } from "../../services/product/getProductById";
@@ -35,6 +36,8 @@ const validationSchema = Yup.object({});
 const Products = ({ user }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width:600px)"); // ✅ Works without ThemeProvider
+
   const [ProductData, setProductData] = useState([]);
   const [imageArray, setImageArray] = useState([]);
   const [selectedImage, setSelectedImage] = useState(imageArray[0]);
@@ -49,7 +52,7 @@ const Products = ({ user }) => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 2,
     slidesToScroll: 1,
     autoplay: false,
     autoplaySpeed: 3000,
@@ -81,6 +84,13 @@ const Products = ({ user }) => {
       },
     ],
   };
+
+  useEffect(() => {
+    if (sliderRef.current && imageArray.length > 0) {
+      sliderRef.current.slickGoTo(0); // Optional
+    }
+  }, [imageArray]);
+
   useEffect(() => {
     const getData = async () => {
       setLoading(true); // Set loading to true when fetching product data
@@ -100,6 +110,8 @@ const Products = ({ user }) => {
             response.data.data.defaultImage,
             ...(response.data.data.otherImages || []),
           ];
+          setDefaultImg(response.data.data.defaultImage);
+          console.log(defaulImg);
           setImageArray(imgArray);
         } else {
           toast.error("Product not found or returned null");
@@ -211,7 +223,7 @@ const Products = ({ user }) => {
                 sx={{
                   width: "100%",
                   height: { xs: "250px", md: "400px" },
-                  display: "flex",
+                  display: isMobile ? "none" : "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   overflow: "hidden",
@@ -236,27 +248,35 @@ const Products = ({ user }) => {
                   alignItems: "center",
                 }}
               >
-                {imageArray?.length > 1 ? (
+                {imageArray?.length > 0 ? (
                   <Box
                     name="sliderContainer"
                     sx={{ maxWidth: { xs: "300px", md: "400px" } }}
                   >
-                    <Slider {...brandSettings}>
+                    <Slider {...brandSettings} ref={sliderRef}>
                       {imageArray.map((image, index) => (
                         <Box
                           key={index}
                           onClick={() => setSelectedImage(image)}
                         >
-                          <img
+                          <Box
+                            component="img"
+                            key={index}
                             src={image}
                             alt={image.alt}
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              border:
-                                image === selectedImage
-                                  ? "1px solid white"
-                                  : "",
+                            onClick={() => setSelectedImage(image)}
+                            sx={{
+                              width: "100%",
+                              height: "auto",
+
+                              objectFit: "contain",
+                              cursor: "pointer",
+
+                              outline: "none", // ✅ prevent blue or white border
+                              "&:focus": {
+                                outline: "none", // ✅ remove focus border
+                                border: "none",
+                              },
                             }}
                           />
                         </Box>
@@ -405,37 +425,37 @@ const Products = ({ user }) => {
                 <Formik
                   initialValues={{ color: "", qty: "" }}
                   validationSchema={validationSchema}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    setSubmitting(true);
-                    console.log(quantity);
-                    try {
-                      if (user && user.id) {
-                        const userID = user.id;
-                        const obj = {
-                          productId: ProductData._id,
-                          quantity: quantity,
-                          userId: userID,
-                        };
-                        const response = await addToCartService(obj);
-                        if (response?.status === 200) {
-                          // Reduce OnHand by quantity
-                          setProductData((prev) => ({
-                            ...prev,
-                            onHand: prev.onHand - quantity,
-                          }));
-                          toast.success("Product added to the cart");
-                        } else {
-                          toast.error("Failed to add product to cart");
-                        }
-                      } else {
-                        console.error("User ID is missing");
-                        window.location.href = "/auth/login";
-                      }
-                    } catch (error) {
-                      console.log(error);
-                      toast.error("Something Went Wrong While Product to Cart");
-                    }
-                  }}
+                  // onSubmit={async (values, { setSubmitting }) => {
+                  //   setSubmitting(true);
+                  //   console.log(quantity);
+                  //   try {
+                  //     if (user && user.id) {
+                  //       const userID = user.id;
+                  //       const obj = {
+                  //         productId: ProductData._id,
+                  //         quantity: quantity,
+                  //         userId: userID,
+                  //       };
+                  //       const response = await addToCartService(obj);
+                  //       if (response?.status === 200) {
+                  //         // Reduce OnHand by quantity
+                  //         setProductData((prev) => ({
+                  //           ...prev,
+                  //           onHand: prev.onHand - quantity,
+                  //         }));
+                  //         toast.success("Product added to the cart");
+                  //       } else {
+                  //         toast.error("Failed to add product to cart");
+                  //       }
+                  //     } else {
+                  //       console.error("User ID is missing");
+                  //       window.location.href = "/auth/login";
+                  //     }
+                  //   } catch (error) {
+                  //     console.log(error);
+                  //     toast.error("Something Went Wrong While Product to Cart");
+                  //   }
+                  // }}
                 >
                   {({
                     values,

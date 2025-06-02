@@ -70,7 +70,7 @@ const CreateWarranty = () => {
   };
   const uploadFile = (file) => {
     const params = {
-      Bucket: "imageholdervys",
+      Bucket: "vysimages",
       Key: file.name,
       Body: file,
       ACL: "public-read", // Set to 'public-read' to allow access to the file URL

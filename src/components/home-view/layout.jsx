@@ -10,6 +10,7 @@ import {
   Typography,
   useTheme,
   CircularProgress,
+  useMediaQuery,
 } from "@mui/material";
 
 import SidebarComponent from "../common/sidebar";
@@ -38,6 +39,8 @@ import { useNavigate } from "react-router-dom";
 
 const HomeView = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width:600px)"); // ✅ Works without ThemeProvider
+
   const [value, setValue] = React.useState(0);
   const [featuredProductData, setFeaturedProductData] = useState([]);
   const [onSaleProductData, setOnSaleProductData] = useState([]);
@@ -237,7 +240,10 @@ const HomeView = () => {
         name="sidebarAndSliderContainer"
         sx={{ background: "#030138", color: "white", display: "flex" }}
       >
-        <Box name="sidebarContainer" sx={{ padding: "10px" }}>
+        <Box
+          name="sidebarContainer"
+          sx={{ padding: "10px", display: isMobile ? "none" : "block" }}
+        >
           <SidebarComponent />
         </Box>
         <Box
@@ -247,7 +253,7 @@ const HomeView = () => {
             borderRadius: 2,
             overflow: "hidden",
             boxShadow: theme.shadows[3],
-            display: { xs: "none", sm: "block" },
+            display: "block",
           }}
         >
           <Swiper
@@ -257,15 +263,25 @@ const HomeView = () => {
             pagination={{ clickable: true }}
             autoplay={{ delay: 3000 }}
             loop={true}
-            style={{ width: "100%", height: "400px" }}
+            style={{ width: "100%", height: isMobile ? "100%" : "400px" }}
           >
             {images.map((img, index) => (
               <SwiperSlide key={index}>
-                <img
+                <Box
+                  component="img"
                   src={img.src}
                   loading="lazy"
                   alt={`Slide ${index + 1}`}
-                  style={{ width: "100%", height: "100%" }}
+                  sx={{
+                    width: "100%",
+                    height: {
+                      xs: "180px", // Mobile
+                      sm: "250px", // Small tablets
+                      md: "300px", // Medium screens
+                      lg: "400px", // Large screens
+                    },
+                    objectFit: "cover",
+                  }}
                 />
               </SwiperSlide>
             ))}
@@ -302,7 +318,6 @@ const HomeView = () => {
               >
                 <Box
                   sx={{
-                    backgroundColor: "#212121",
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
@@ -325,6 +340,8 @@ const HomeView = () => {
                     sx={{
                       fontFamily: "Open Sans, Helvetica, Arial, sans-serif",
                       fontWeight: "300",
+                      letterSpacing: "0.4px",
+                      wordSpacing: "0.3px",
                     }}
                   >
                     {product.itemName.length > 50
@@ -406,7 +423,6 @@ const HomeView = () => {
                 <Grid item xs={12} sm={6} md={3} key={product._id || index}>
                   <Box
                     sx={{
-                      backgroundColor: "#212121",
                       padding: "10px",
                       display: "flex",
                       flexDirection: "column",
@@ -480,7 +496,6 @@ const HomeView = () => {
                 <Grid item xs={12} sm={6} md={3} key={product._id || index}>
                   <Box
                     sx={{
-                      backgroundColor: "#212121",
                       padding: "10px",
                       display: "flex",
                       flexDirection: "column",
@@ -554,7 +569,6 @@ const HomeView = () => {
                 <Grid item xs={12} sm={6} md={3} key={product._id || index}>
                   <Box
                     sx={{
-                      backgroundColor: "#212121",
                       padding: "10px",
                       display: "flex",
                       flexDirection: "column",

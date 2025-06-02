@@ -9,18 +9,19 @@ import {
   Select,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import MusicNoteOutlinedIcon from "@mui/icons-material/MusicNoteOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp"; // Import at top
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import logo from "./vys.png";
+import logo from "./vyslogo.png";
 import { Link } from "react-router-dom";
 import { Modal } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
@@ -37,9 +38,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useSelector } from "react-redux";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useTheme } from "@mui/material/styles"; // Import useTheme hook
+import SidebarComponent from "../common/sidebar";
 
 const HomeHeader = () => {
   const theme = useTheme(); // Use the theme hook to get access to the theme object
+  const isMobile = useMediaQuery("(max-width:600px)"); // ✅ Works without ThemeProvider
 
   const validationSchema = Yup.object().shape({
     categoryId: Yup.string().required("Title is required!"),
@@ -259,9 +262,10 @@ const HomeHeader = () => {
           display: "flex",
           justifyContent: "space-between",
           borderBottom: "1px solid white",
-          flexWrap: "wrap",
+          alignItems: "center", // vertically center items
+          flexWrap: "nowrap", // prevent wrapping
           [theme.breakpoints.down("sm")]: {
-            justifyContent: "center", // Center the items on mobile
+            justifyContent: "space-between",
           },
         }}
       >
@@ -291,7 +295,7 @@ const HomeHeader = () => {
                 }}
               />
             </Link>
-            <Typography sx={{ fontSize: "15px" }}>Facebook</Typography>
+            {/* <Typography sx={{ fontSize: "15px" }}>Facebook</Typography> */}
           </Box>
           <Box name="instagram" sx={{ display: "flex", paddingRight: "10px" }}>
             <Link
@@ -306,7 +310,7 @@ const HomeHeader = () => {
                 }}
               />
             </Link>
-            <Typography sx={{ fontSize: "15px" }}>Instagram</Typography>
+            {/* <Typography sx={{ fontSize: "15px" }}>Instagram</Typography> */}
           </Box>
           <Box name="tiktok" sx={{ display: "flex", paddingRight: "10px" }}>
             <Link
@@ -321,9 +325,24 @@ const HomeHeader = () => {
                 }}
               />
             </Link>
-            <Typography sx={{ fontSize: "15px" }}>TikTok</Typography>
+
+            {/* <Typography sx={{ fontSize: "15px" }}>TikTok</Typography> */}
+          </Box>
+          <Box name="tiktok" sx={{ display: "flex", paddingRight: "10px" }}>
+            <a
+              href="https://wa.me/+94775326888" // replace with your WhatsApp number
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <WhatsAppIcon sx={{  color: "white" }} />
+            </a>
           </Box>
         </Box>
+        <Box sx={{ display: isMobile ? "none" : "block" }}>
+          <Typography>Call Us - +94 11 2849 684 / +94 77 5326 888</Typography>
+        </Box>
+
         <Box
           name="userOptions"
           sx={{
@@ -335,16 +354,6 @@ const HomeHeader = () => {
             flexBasis: 200,
           }}
         >
-          <Link
-            to={"https://maps.app.goo.gl/CE92crfTG1E19ti38"}
-            target="blank"
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
-              <LocationOnOutlinedIcon sx={{ paddingRight: "5px" }} />
-              <Typography sx={{ fontSize: "15px" }}>Store Locator</Typography>
-            </Box>
-          </Link>
           {/* <Box
             name="trackOrder"
             sx={{
@@ -390,30 +399,51 @@ const HomeHeader = () => {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-
           alignItems: "center",
+          flexWrap: "wrap", // allow wrapping on smaller screens
+          [theme.breakpoints.down("sm")]: {
+            justifyContent: "center", // center all items on mobile
+          },
         }}
       >
+        {/* Company Logo */}
+        <Box
+          name="sidebarContainer"
+          sx={{ padding: "10px", display: isMobile ? "block" : "none" }}
+        >
+          <SidebarComponent />
+        </Box>
         <Box
           name="companyLogo"
           sx={{
             display: "flex",
-            flex: 1,
+
+            flex: isMobile ? 2 : 1,
             padding: "10px",
-            justifyContent: "left",
+            marginLeft: isMobile ? "" : "10px",
+            justifyContent: isMobile ? "center" : "left", // center on xs, left on sm+
           }}
         >
           <Link to={"/"}>
-            <img alt="Company Logo" width="50%" src={logo} />
+            <img
+              alt="Company Logo"
+              src={logo}
+              style={{
+                width: "100%", // bigger on mobile
+                maxWidth: "200px", // limit size on larger screens
+              }}
+            />
           </Link>
         </Box>
+
+        {/* Search - hide on mobile */}
         <Box
           name="search"
           sx={{
-            display: "flex",
+            display: { xs: "none", sm: "flex" },
             flex: 1,
+            justifyContent: "left",
             padding: "10px",
-            display: { xs: "none", sm: "block" },
           }}
         >
           <TextField
@@ -430,78 +460,74 @@ const HomeHeader = () => {
             }}
             sx={{
               "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "white", // Default border color
-                },
-                "&:hover fieldset": {
-                  borderColor: "white", // Border color on hover
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "white", // Border color when focused
-                },
-                color: "white", // Ensures icon and label inherit text color
+                "& fieldset": { borderColor: "white" },
+                "&:hover fieldset": { borderColor: "white" },
+                "&.Mui-focused fieldset": { borderColor: "white" },
+                color: "white",
               },
-              "& .MuiInputBase-input": {
-                color: "white", // Changes user input text color
-              },
-              "& .MuiInputLabel-root": {
-                color: "white", // Label color
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "white", // Label color when focused
-              },
+              "& .MuiInputBase-input": { color: "white" },
+              "& .MuiInputLabel-root": { color: "white" },
+              "& .MuiInputLabel-root.Mui-focused": { color: "white" },
             }}
           />
         </Box>
+
+        {/* Cart + Quotation - hide on mobile */}
         <Box
           name="deal"
           sx={{
             display: "flex",
             flex: 1,
             padding: "10px",
-            justifyContent: "right",
+            justifyContent: { xs: "center", sm: "flex-end" },
+            alignItems: "center",
+            gap: "10px",
           }}
         >
-          <Box
-            name="getQuotation"
-            sx={{
-              display: "flex",
-              paddingRight: "10px",
-              "&:hover": {
-                cursor: "pointer",
-              },
-            }}
-            onClick={() => {
-              handleOpen();
-
-              console.log("qoutData", qoutData);
-            }}
-          >
-            <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
-            <Typography
+          {/* Desktop View */}
+          <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+            <Box
+              name="getQuotation"
               sx={{
-                fontSize: "15px",
-                display: { xs: "none", sm: "block" },
+                display: "flex",
+                paddingRight: "10px",
+                "&:hover": { cursor: "pointer" },
+              }}
+              onClick={() => {
+                handleOpen();
+                console.log("qoutData", qoutData);
               }}
             >
-              Get A Quotation
-            </Typography>
-          </Box>
-          <Link
-            to={"/cart-view/cart"}
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            <Box name="cart" sx={{ display: "flex", paddingRight: "10px" }}>
-              <ShoppingCartOutlinedIcon sx={{ paddingRight: "5px" }} />
-              <Typography
-                sx={{ fontSize: "15px", display: { xs: "none", sm: "block" } }}
-              >
-                LKR {totalPrice.toFixed(2)}
-              </Typography>
+              <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
+              <Typography sx={{ fontSize: "15px" }}>Get A Quotation</Typography>
             </Box>
-          </Link>
+
+            <Link
+              to={"/cart-view/cart"}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              <Box name="cart" sx={{ display: "flex", paddingRight: "10px" }}>
+                <ShoppingCartOutlinedIcon sx={{ paddingRight: "5px" }} />
+                <Typography sx={{ fontSize: "15px" }}>
+                  LKR {totalPrice.toFixed(2)}
+                </Typography>
+              </Box>
+            </Link>
+          </Box>
+
+          {/* Mobile View */}
+          <Box sx={{ display: { xs: "flex", sm: "none" }, gap: "10px" }}>
+            <LocalPrintshopOutlinedIcon
+              sx={{ color: "white", cursor: "pointer" }}
+              onClick={handleOpen}
+            />
+            <Link to={"/cart-view/cart"}>
+              <ShoppingCartOutlinedIcon sx={{ color: "white" }} />
+            </Link>
+          </Box>
         </Box>
       </Box>
+
       <Modal
         open={open}
         onClose={handleClose}
