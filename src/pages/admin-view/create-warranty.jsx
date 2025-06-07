@@ -51,7 +51,7 @@ const CreateWarranty = () => {
 
       const img = new Image();
       img.onload = () => {
-        if (img.width !== 750 || img.height !== 288) {
+        if (img.width !== 600 || img.height !== 600) {
           setError(
             "Invalid image dimensions. Please upload an image of 600 x 600 pixels."
           );
@@ -80,17 +80,22 @@ const CreateWarranty = () => {
       if (err) {
         console.error("Error uploading file:", err);
       } else {
-        console.log("File uploaded successfully:", data);
+      
         setImageUrl(data.Location); // Set the image URL for display
       }
     });
   };
   const handleSubmitImage = (e) => {
     e.preventDefault();
-    if (selectedFile) {
-      uploadFile(selectedFile);
-    } else {
-      alert("Please select a valid file to upload.");
+    try {
+      if (selectedFile) {
+       
+        uploadFile(selectedFile);
+      } else {
+        alert("Please select a valid file to upload.");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -135,7 +140,7 @@ const CreateWarranty = () => {
                 } else {
                   toast.error(response.data.message);
                 }
-                console.log(values, imageUrl);
+           
               } catch (error) {
                 console.log(error);
 
@@ -205,6 +210,7 @@ const CreateWarranty = () => {
                           alt="Uploaded"
                           style={{ width: "200px" }}
                         />
+                        <p>{imageUrl}</p>
                       </div>
                     )}
                   </Box>

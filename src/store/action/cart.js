@@ -12,7 +12,7 @@ export const GetCartData = (userId) => {
         const response = await getCart(userId);
         if (response?.data?.success) {
           const cart = response.data.data ? response.data.data : []; // Ensure empty cart if no items
-          console.log("cart",cart);
+          
           dispatch({
             type: "CART_DATA",
             cart: cart.items,

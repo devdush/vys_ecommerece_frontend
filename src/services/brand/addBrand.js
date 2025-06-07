@@ -4,8 +4,7 @@ import httpService from "../httpService";
 const apiEndpoint = `${apiConfig.apiURL}/api/brand/add`;
 
 export function addBrand(obj) {
-  console.log(apiEndpoint);
-
+ 
   return httpService.post(
     apiEndpoint,
     {

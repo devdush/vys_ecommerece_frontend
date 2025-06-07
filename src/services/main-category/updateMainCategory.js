@@ -5,8 +5,7 @@ const apiEndpoint = `${apiConfig.apiURL}/api/main-category/edit`;
 
 export function updateMainCategory(obj, id) {
   const test = `${apiEndpoint}/${id}`;
-  console.log(obj);
-
+  
   return httpService.put(
     test,
     {

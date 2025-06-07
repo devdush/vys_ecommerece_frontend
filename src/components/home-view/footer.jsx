@@ -110,7 +110,7 @@ const Footer = () => {
                 Need help to get quotations? Call Us
               </Typography>
               <Typography variant="h6" fontWeight={600}>
-                +94 11 2849 684
+                +94 11 2223 080
               </Typography>
             </Box>
           </Box>
@@ -121,7 +121,7 @@ const Footer = () => {
             </Typography>
             <Typography variant="body2">
               No. 199/6, Horana road, Kottawa. <br />
-              +94 11 2849 684 / +94 77 5326 888
+              +94 11 2223 080 / +94 77 5326 888
             </Typography>
           </Box>
 
@@ -158,24 +158,28 @@ const Footer = () => {
               <InstagramIcon sx={{ fontSize: 30, color: "white" }} />
             </Link>
             <a
-              href="https://wa.me/+94775326888" // replace with your WhatsApp number
+              href="https://wa.me/+94704156355" // replace with your WhatsApp number
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none" }}
             >
               <WhatsAppIcon sx={{ fontSize: 30, color: "white" }} />
             </a>
+            <Link
+              to={"https://maps.app.goo.gl/CE92crfTG1E19ti38"}
+              target="blank"
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              <Box
+                name="location"
+                sx={{ display: "flex", paddingRight: "10px" }}
+              >
+                <LocationOnOutlinedIcon
+                  sx={{ paddingRight: "5px", fontSize: 30 }}
+                />
+              </Box>
+            </Link>
           </Box>
-          <Link
-            to={"https://maps.app.goo.gl/CE92crfTG1E19ti38"}
-            target="blank"
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            <Box name="location" sx={{ display: "flex", paddingRight: "10px" }}>
-              <LocationOnOutlinedIcon sx={{ paddingRight: "5px" }} />
-              <Typography sx={{ fontSize: "15px" }}>Store Locator</Typography>
-            </Box>
-          </Link>
         </Box>
 
         {/* Product Links */}

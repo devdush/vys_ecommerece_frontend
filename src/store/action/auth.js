@@ -7,7 +7,7 @@ export const LoginUser = (data) => {
     try {
       const response = await loginUser(data);
 
-      console.log(response.data);
+    
       if (response?.data?.success) {
         const user = response.data.user;
         const isAuthenticated = response.data.success;

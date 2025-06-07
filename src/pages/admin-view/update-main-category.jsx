@@ -97,7 +97,7 @@ const UpdateMainCategory = () => {
     } catch (error) {
       toast.error("Something went wrong while deletion!");
     }
-    console.log();
+   
   };
 
   const columns = [
@@ -251,22 +251,10 @@ const UpdateMainCategory = () => {
                     obj,
                     selectedData._id
                   );
-                  console.log("Res", response);
+                  
                   if (response.data.success)
                     toast.success("Successfully Updated the Main Category");
 
-                  //   const indexOfItem = data.findIndex(
-                  //     (item) => item._id === selectedData._id
-                  //   );
-                  //   const updatedTitle = {
-                  //     ...data[indexOfItem],
-                  //     title: values.title,
-                  //   };
-
-                  //   console.log("my", data[0]);
-                  //   console.log("my2", updatedTitle);
-                  //   data[indexOfItem] = updatedTitle;
-                  //   console.log("my22", data[indexOfItem]);
                 } catch (error) {
                   console.log(error);
 

@@ -95,7 +95,7 @@ const UpdateProducts = () => {
     const getData = async () => {
       try {
         const response = await getProducts();
-        //console.log(response);
+
         setProducts(response.data.data);
         setFilteredData(response.data.data); // Set initial filtered data
       } catch (error) {
@@ -204,7 +204,7 @@ const UpdateProducts = () => {
       if (err) {
         console.error("Error uploading file:", err);
       } else {
-        console.log("File uploaded successfully:", data);
+   
         setImageUrl(data.Location); // Set the image URL for display
       }
     });
@@ -236,7 +236,7 @@ const UpdateProducts = () => {
   };
   const handleMoreSubmit = (e) => {
     e.preventDefault();
-    console.log(moreImages);
+ 
 
     moreImages.forEach((image) => uploadMoreImages(image));
   };
@@ -321,7 +321,6 @@ const UpdateProducts = () => {
 
   const handleUpdate = async (id, modalType) => {
     setSelectedData(id);
-    console.log(selectedData);
 
     setModalType(modalType);
     handleOpen();
@@ -490,7 +489,7 @@ const UpdateProducts = () => {
                   defaultImage: imageUrl,
                   otherImages: uploadedMoreImages,
                 };
-                console.log(parsedValues);
+         
 
                 try {
                 } catch (error) {

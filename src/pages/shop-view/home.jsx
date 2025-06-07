@@ -31,8 +31,8 @@ const ShopHome = () => {
         const obj = {
           id: id,
           brand: "",
-          minPrice: "1000",
-          maxPrice: "170000",
+          minPrice: "",
+          maxPrice: "",
         };
         await dispatch(getProductsByFilter(obj));
       } catch (error) {
@@ -48,7 +48,9 @@ const ShopHome = () => {
   useEffect(() => {
     if (products.length > 0) {
       const brandTitles = products.map((item) => item.brand.brandTitle);
-      dispatch(setBrandsByCategorizedProducts(brandTitles));
+      const uniqueBrandTitles = [...new Set(brandTitles)];
+
+      dispatch(setBrandsByCategorizedProducts(uniqueBrandTitles));
     }
   }, [products, dispatch]);
 
@@ -58,7 +60,6 @@ const ShopHome = () => {
     }
   }, [dispatch, userID]);
   const handleCardClick = (id) => {
-    console.log(`Card clicked for product ID: ${id}`);
     navigate(`/shop/products/?id=${id}`);
   };
 

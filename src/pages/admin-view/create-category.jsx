@@ -56,7 +56,7 @@ const CreateCategory = () => {
     const getData = async () => {
       try {
         const categoryResponse = await getMainCategory();
-        console.log(categoryResponse);
+       
         setMainCategories(categoryResponse.data.data);
       } catch (error) {
         toast.error("Something went wrong while fetching initial data");

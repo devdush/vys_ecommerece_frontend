@@ -190,9 +190,7 @@ const FromERP = () => {
       if (err) {
         console.error("Error uploading file:", err);
       } else {
-        console.log("File uploaded successfully:", data);
         setImageUrl(data.Location); // Set the image URL for display
-        console.log(imageUrl)
       }
     });
   };
@@ -217,20 +215,16 @@ const FromERP = () => {
     try {
       e.preventDefault();
       if (selectedFile) {
-        console.log("selectedFile",selectedFile);
-        
         uploadFile(selectedFile);
       } else {
         alert("Please select a valid file to upload.");
       }
-      
     } catch (error) {
-      console.log("e",error)
+      console.log("e", error);
     }
   };
   const handleMoreSubmit = (e) => {
     e.preventDefault();
-    console.log(moreImages);
 
     moreImages.forEach((image) => uploadMoreImages(image));
   };
@@ -246,7 +240,7 @@ const FromERP = () => {
           (element) =>
             !webDBItemCodes.includes(element.itemName) && element.on_hand != 0
         );
-        
+
         setData(newArray);
         setFilteredData(newArray); // Set initial filtered data
       } catch (error) {
@@ -272,8 +266,6 @@ const FromERP = () => {
   }, [searchQuery, data]);
 
   const handleUpdate = async (id) => {
-    console.log(id);
-
     setSelectedItem(id);
     handleOpen();
   };
@@ -307,7 +299,6 @@ const FromERP = () => {
       valueFormatter: (params) => {
         // Format the value to 2 decimal points
         const value = Number(params);
-        
 
         return value.toFixed(2);
       },
@@ -503,8 +494,6 @@ const FromERP = () => {
                 };
                 try {
                   const response = await addProduct(parsedValues);
-                  console.log("Response", response);
-                  console.log("Value", parsedValues);
 
                   if (response.data.success) {
                     toast.success(
@@ -521,7 +510,7 @@ const FromERP = () => {
                 // console.log(parsedValues); // Verify the values before sending
                 // alert(JSON.stringify(parsedValues, null, 2));
                 setSubmitting(false);
-              }} 
+              }}
             >
               {({
                 errors,

@@ -64,6 +64,7 @@ const ShopSidebarComponent = ({ userType, to }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1024px)");
   useEffect(() => {
+    
     const fetchMenuData = async () => {
       try {
         // Fetch main categories
@@ -105,7 +106,7 @@ const ShopSidebarComponent = ({ userType, to }) => {
   useEffect(() => {
     const handleResize = () => {
       setIsCollapsed(window.innerWidth <= 1024); // Adjust the breakpoint as needed
-      console.log(isCollapsed);
+   
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -289,7 +290,7 @@ const ShopSidebarComponent = ({ userType, to }) => {
           <Formik
             initialValues={{ minPrice: "", maxPrice: "", brand: "" }}
             onSubmit={async (values) => {
-              console.log("Form Values:", values, id);
+           
               try {
                 const obj = {
                   id: id,

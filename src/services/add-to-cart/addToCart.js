@@ -15,7 +15,7 @@ const addToCart = async (itemId, quantityToAdd, onHand) => {
           quantity: quantityToAdd,
         };
         const response = await addToCartService(cartItem);
-        console.log(response);
+
         if (response?.status === 200) {
           toast.success("Item successfully added to the cart");
         } else {

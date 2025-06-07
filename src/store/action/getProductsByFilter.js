@@ -7,8 +7,7 @@ export const getProductsByFilter = (obj) => {
     try {
       const response = await getProductsByCategory(id);
       const products = response?.data?.data || [];
-      console.log("response in pro ac", response);
-
+   
       dispatch({
         type: "PRODUCTS_BY_FILTER",
         products: products,

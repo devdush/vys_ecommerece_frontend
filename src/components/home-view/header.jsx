@@ -176,7 +176,6 @@ const HomeHeader = () => {
       const deleteRequest = objectStore.delete(id);
 
       deleteRequest.onsuccess = () => {
-        console.log(`Data with id ${id} deleted successfully.`);
 
         // Update the total by subtracting the deleted item’s price
         const deletedProduct = qoutData.find((item) => item.id === id);
@@ -330,17 +329,17 @@ const HomeHeader = () => {
           </Box>
           <Box name="tiktok" sx={{ display: "flex", paddingRight: "10px" }}>
             <a
-              href="https://wa.me/+94775326888" // replace with your WhatsApp number
+              href="https://wa.me/+94704156355" // replace with your WhatsApp number
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none" }}
             >
-              <WhatsAppIcon sx={{  color: "white" }} />
+              <WhatsAppIcon sx={{ color: "white" }} />
             </a>
           </Box>
         </Box>
         <Box sx={{ display: isMobile ? "none" : "block" }}>
-          <Typography>Call Us - +94 11 2849 684 / +94 77 5326 888</Typography>
+          <Typography>Call Us - +94 11 2223 080 / +94 70 4156 355</Typography>
         </Box>
 
         <Box
@@ -495,7 +494,7 @@ const HomeHeader = () => {
               }}
               onClick={() => {
                 handleOpen();
-                console.log("qoutData", qoutData);
+             
               }}
             >
               <LocalPrintshopOutlinedIcon sx={{ paddingRight: "5px" }} />
@@ -596,7 +595,7 @@ const HomeHeader = () => {
                   const selProduct = products.find(
                     (product) => product._id === values.product
                   );
-                  console.log("selProduct", selProduct);
+         
                   const savingObj = {
                     productName: selProduct.itemName,
                     productPrice: selProduct.sales_price,

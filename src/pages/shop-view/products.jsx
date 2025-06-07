@@ -111,7 +111,7 @@ const Products = ({ user }) => {
             ...(response.data.data.otherImages || []),
           ];
           setDefaultImg(response.data.data.defaultImage);
-          console.log(defaulImg);
+
           setImageArray(imgArray);
         } else {
           toast.error("Product not found or returned null");
@@ -136,7 +136,7 @@ const Products = ({ user }) => {
   }, [dispatch, user?.id, ProductData]);
 
   const handleIncrease = () => {
-    console.log(user);
+  
     if (quantity < ProductData.onHand) {
       setQuantity((prev) => prev + 1);
     } else {
@@ -425,37 +425,7 @@ const Products = ({ user }) => {
                 <Formik
                   initialValues={{ color: "", qty: "" }}
                   validationSchema={validationSchema}
-                  // onSubmit={async (values, { setSubmitting }) => {
-                  //   setSubmitting(true);
-                  //   console.log(quantity);
-                  //   try {
-                  //     if (user && user.id) {
-                  //       const userID = user.id;
-                  //       const obj = {
-                  //         productId: ProductData._id,
-                  //         quantity: quantity,
-                  //         userId: userID,
-                  //       };
-                  //       const response = await addToCartService(obj);
-                  //       if (response?.status === 200) {
-                  //         // Reduce OnHand by quantity
-                  //         setProductData((prev) => ({
-                  //           ...prev,
-                  //           onHand: prev.onHand - quantity,
-                  //         }));
-                  //         toast.success("Product added to the cart");
-                  //       } else {
-                  //         toast.error("Failed to add product to cart");
-                  //       }
-                  //     } else {
-                  //       console.error("User ID is missing");
-                  //       window.location.href = "/auth/login";
-                  //     }
-                  //   } catch (error) {
-                  //     console.log(error);
-                  //     toast.error("Something Went Wrong While Product to Cart");
-                  //   }
-                  // }}
+             
                 >
                   {({
                     values,

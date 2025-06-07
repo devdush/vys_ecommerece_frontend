@@ -32,7 +32,7 @@ const CartPage = ({ user }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Check if screen size is small
 
   useEffect(() => {
-    console.log("Cart items from Redux:", cart.cart);
+    
     if (cart.cart) {
       setCartItems(cart.cart);
       setSelectedItems(cart.cart.map((item) => item._id));
@@ -54,7 +54,7 @@ const CartPage = ({ user }) => {
     setSelectedItems((prev) => prev.filter((id) => id !== id));
 
     const obj = { userId: user.id, productId: itemId };
-    console.log(obj);
+
     const response = await removeItemFromCart(obj);
   };
 
@@ -74,7 +74,7 @@ const CartPage = ({ user }) => {
       paymentMethod: "Card",
       shippingAddress,
     };
-    console.log("order", order);
+
     // axios
     //   .post("/api/checkout", order)
     //   .then((response) => console.log("Order placed:", response.data))

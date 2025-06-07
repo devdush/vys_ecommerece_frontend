@@ -124,29 +124,18 @@ const HomeView = () => {
       alt: "Image 1",
       caption: "This is the first image",
     },
-
-    {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Apple.png",
-      alt: "Image 2",
-      caption: "This is the second image",
-    },
     {
       src: "https://vysimages.s3.eu-north-1.amazonaws.com/Asus.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Biostart.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/logitech.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Dell.png",
-      alt: "Image 2",
-      caption: "This is the second image",
-    },
-    {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/hcl.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/msi.jpg",
       alt: "Image 2",
       caption: "This is the second image",
     },
@@ -156,7 +145,7 @@ const HomeView = () => {
       caption: "This is the second image",
     },
     {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/intel.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Ugreen.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
@@ -166,12 +155,12 @@ const HomeView = () => {
       caption: "This is the second image",
     },
     {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/nvidia.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/viewsonic.jpg",
       alt: "Image 2",
       caption: "This is the second image",
     },
     {
-      src: "https://vysimages.s3.eu-north-1.amazonaws.com/samsung.png",
+      src: "https://vysimages.s3.eu-north-1.amazonaws.com/Tiandy.png",
       alt: "Image 2",
       caption: "This is the second image",
     },
@@ -225,7 +214,7 @@ const HomeView = () => {
   };
   const handleButtonClick = (id) => {
     // Navigate to the product details page
-    console.log(`Card clicked for product ID: ${id}`);
+ 
     navigate(`/shop/products/?id=${id}`); // Example navigation
   };
   return (
@@ -649,18 +638,26 @@ const HomeView = () => {
           sx={{
             overflow: "hidden",
             boxShadow: theme.shadows[3],
-            paddingLeft: "15px",
+            padding: "15px",
           }}
         >
           <Slider {...brandSettings}>
             {brandImages.map((image, index) => (
-              <Box key={index}>
-                <img
+              <Box key={index} display="flex" justifyContent="center">
+                <Box
+                  component="img"
                   src={image.src}
-                  alt={image.alt}
-                  style={{
-                    width: "250px",
-                    height: "150px",
+                  loading="lazy"
+                  alt={`Slide ${index + 1}`}
+                  sx={{
+                    width: "95%",
+                    height: {
+                      xs: "180px", // Mobile
+                      sm: "250px", // Small tablets
+                      md: "300px", // Medium screens
+                      lg: "150px", // Large screens
+                    },
+
                     objectFit: "cover",
                   }}
                 />

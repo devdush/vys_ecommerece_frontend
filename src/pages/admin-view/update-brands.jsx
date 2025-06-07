@@ -13,7 +13,7 @@ const UpdateBrands = () => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getBrands();
-      console.log("res in brands", res);
+      
       if (res.status === 200) {
         setBrands(res?.data?.data);
       } else {

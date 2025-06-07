@@ -2,8 +2,7 @@ import { Box, Modal } from "@mui/material";
 import { useState } from "react";
 
 const GetQuotation = (handleClose, {open}) => {
-    console.log(open);
-    
+
   return (
     <Modal
       open={open}
