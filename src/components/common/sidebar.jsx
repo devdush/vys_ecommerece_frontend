@@ -53,7 +53,7 @@ const SidebarComponent = () => {
             );
 
             const subCategories = subCategoriesResponse.data.data;
-
+            console.log("Subcategories:", subCategories);
             return {
               title: mainCategory.title,
               to: `/main/${mainCategory._id}`,
